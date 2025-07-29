@@ -23,5 +23,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("",views.main, name='main'),
     path("search/", views.search, name='search'),
-    path("login/", views.login, name='login'),
+    path("mypage/", views.mypage, name='mypage'),
+    path("survey/", views.survey, name='survey'),
+    path("kakao_login/", views.kakao_login, name='kakao_login'),
+    path("kakao_logout/", views.kakao_logout, name='kakao_logout'),
 ]

@@ -55,9 +55,13 @@
         <input class="form-control me-2" type="search" placeholder="기관 이름 검색" aria-label="Search">
         <button class="btn btn-outline-primary" type="submit">검색</button>
       </form>
-      <button class="btn btn-outline-primary" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=a9e637eee7e057c532f2fc68ef7441fb&redirect_uri=https://workexperience.onrender.com&response_type=code'">
-  카카오로 계속
-</button>
+        {% if user.is_authenticated %}
+    <p>안녕하세요, {{ user.first_name }}님!</p>
+    <a href="{% url 'mypage' %}"><button>내 정보</button></a>
+    <a href="{% url 'kakao_logout' %}"><button>로그아웃</button></a>
+  {% else %}
+    <a href="{% url 'kakao_login' %}"><button>카카오톡으로 계속</button></a>
+  {% endif %}
     </div>
   </nav>
 

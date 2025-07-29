@@ -1,0 +1,6 @@
+<h2>요양원 관련 정보를 입력해주세요</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">저장</button>
+</form>

@@ -1,0 +1,8 @@
+<h2>내 정보</h2>
+{% if survey %}
+  <p>선호 지역: {{ survey.preferred_location }}</p>
+  <p>예산: {{ survey.budget }}</p>
+  <p>원하는 시설: {{ survey.facilities }}</p>
+{% else %}
+  <p>설문 내역이 없습니다.</p>
+{% endif %}
