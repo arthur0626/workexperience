@@ -17,7 +17,7 @@ def kakao_login(request):
 
 def kakao_logout(request):
     logout(request)
-    kakao_logout_url = "https://kauth.kakao.com/oauth/logout?client_id=a9e637eee7e057c532f2fc68ef7441fb&logout_redirect_uri=http://localhost:8000/"
+    kakao_logout_url = "https://kauth.kakao.com/oauth/logout?client_id=a9e637eee7e057c532f2fc68ef7441fb&logout_redirect_uri=https://workexperience.onrender.com/"
     return redirect('main')
 
 def search(request):
@@ -43,38 +43,45 @@ def survey(request):
         data = {
             'grant_type': 'authorization_code',
             'client_id': 'a9e637eee7e057c532f2fc68ef7441fb',
-            'redirect_uri': 'https://workexperience.onrender.com/survey/',
+            'redirect_uri': 'https://workexperience.onrender.com/survey/',  # 실제 등록된 리디렉션 URI
             'code': code,
         }
         token_response = requests.post(token_url, data=data)
         token_json = token_response.json()
-        access_token = token_json.get('access_token')
 
+        access_token = token_json.get('access_token')
         if not access_token:
             return render(request, 'main.html', {'message': '토큰 발급 실패'})
 
-        user_info = requests.get(
+        user_info_response = requests.get(
             'https://kapi.kakao.com/v2/user/me',
             headers={'Authorization': f'Bearer {access_token}'}
-        ).json()
+        )
+        user_info = user_info_response.json()
 
-        kakao_id = user_info['id']
-        username = f'kakao_{kakao_id}'
-
-        # 닉네임 추출
+        kakao_id = user_info.get('id')
         kakao_account = user_info.get('kakao_account', {})
         profile_info = kakao_account.get('profile', {})
-        nickname = profile_info.get('nickname', '')
 
-        # 유저 생성 or 조회
+        nickname = profile_info.get('nickname', f'kakao_{kakao_id}')
+        profile_image = profile_info.get('profile_image_url', '')
+
+        username = f'kakao_{kakao_id}'
+
         user, created = User.objects.get_or_create(username=username)
-        if created:
-            user.first_name = nickname  # 닉네임 저장
-            user.save()
+        user.first_name = nickname  # 닉네임 저장
+        user.profile_image = profile_image  # 프로필 이미지 저장
+        user.save()
 
+        # 로그인 처리
         login(request, user)
 
-    # 이후 설문 처리
+        # 사용자 프로필 생성 또는 업데이트
+        user_survey, _ = UserSurvey.objects.get_or_create(user=user)
+        if profile_image:
+            user_survey.profile_image_url = profile_image
+            user_survey.save()
+
     try:
         profile = UserSurvey.objects.get(user=request.user)
         return redirect('main')

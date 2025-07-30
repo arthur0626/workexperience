@@ -1,8 +1,13 @@
 <h2>내 정보</h2>
+
 {% if survey %}
-  <p>선호 지역: {{ survey.preferred_location }}</p>
-  <p>예산: {{ survey.budget }}</p>
-  <p>원하는 시설: {{ survey.facilities }}</p>
+  <p><strong>닉네임:</strong> {{ request.user.first_name }}</p>
+  {% if survey.profile_image_url %}
+    <p><img src="{{ survey.profile_image_url }}" alt="프로필 이미지" style="width:100px; height:auto; border-radius:50%;"></p>
+  {% endif %}
+  <p><strong>선호 지역:</strong> {{ survey.preferred_location }}</p>
+  <p><strong>예산:</strong> {{ survey.budget }}</p>
+  <p><strong>원하는 시설:</strong> {{ survey.facilities }}</p>
 {% else %}
   <p>설문 내역이 없습니다.</p>
 {% endif %}
