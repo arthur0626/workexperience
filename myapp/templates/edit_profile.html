@@ -1,0 +1,7 @@
+<h2>프로필 수정</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">수정 완료</button>
+  <button type="button" onclick="location.href='{% url 'mypage' %}'">취소</button>
+</form>

@@ -2,6 +2,6 @@
 <form method="post">
   {% csrf_token %}
   {{ protected_form.as_p }}
-  <button type="submit" onclick="location.href='{% url 'main' %}'">저장</button>
+  <button type="submit">저장</button>
   <button type="button" onclick="location.href='{% url 'mypage' %}'">취소</button>
 </form>

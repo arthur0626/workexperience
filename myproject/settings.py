@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# LOGIN_URL = 'https://workexperience.onrender.com/kakao_login/'
+LOGIN_URL = 'http://localhost:8000/kakao_login/'
 
 # Application definition
 

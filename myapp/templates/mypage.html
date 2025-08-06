@@ -23,15 +23,23 @@
   <div style="display: flex; gap: 20px; flex-wrap: wrap;">
     {% for profile in protected_profiles %}
       <div style="border: 1px solid #ccc; padding: 10px; border-radius: 10px;">
-        <p><strong>이름:</strong> {{ profile.name }}</p>
-        <p><strong>성별:</strong> {{ profile.gender }}</p>
-        <p><strong>나이:</strong> {{ profile.age }}</p>
-        <p><strong>건강상태:</strong> {{ profile.health_conditions }}</p>
-        <p><strong>보호자 여부:</strong> {{ profile.guardian }}</p>
-        <p><strong>선호 지역:</strong> {{ profile.preferred_location }}</p>
-        <p><strong>예산 범위:</strong> {{ profile.budget }}</p>
-        <p><strong>희망 서비스:</strong> {{ profile.preferred_services }}</p>
-        <p><strong>기타사항:</strong> {{ profile.additional_info }}</p>
+        <p><strong> {{ profile.number }} 번 프로필 </strong></p>
+        <p>이름: {{ profile.name }}</p>
+        <p>성별: {{ profile.sex }}</p>
+        <p>나이: {{ profile.age }}</p>
+
+        <p><strong><br>상세정보</strong></p>
+        <p>보호자 여부: {{ profile.guardian }}</p>
+        <p>예산 범위: {{ profile.budget_max }} - {{ profile.budget_min }}</p>
+        <p>선호 지역: {{ profile.preferred_location }}</p>
+        <p>희망 서비스: {{ profile.preferred_services }}</p>
+        <p>건강상태: {{ profile.health_conditions }}</p>
+        <p>기타사항: {{ profile.additional_info }}</p>
+        <button onclick="location.href='{% url 'edit_profile' profile.id %}'">수정</button>
+        <form action="{% url 'delete_profile' profile.id %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" style="background-color: red; color: white;">삭제</button>
+        </form>
       </div>
     {% endfor %}
   </div>

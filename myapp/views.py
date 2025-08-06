@@ -9,43 +9,13 @@ from django.contrib.auth.decorators import login_required
 
 # 카카오 API 설정
 REST_API_KEY = "a9e637eee7e057c532f2fc68ef7441fb"
-# LOGIN_REDIRECT_URI = "http://localhost:8000/kakao_login/"
-# LOGOUT_REDIRECT_URI = "http://localhost:8000/"
-LOGIN_REDIRECT_URI = "https://workexperience.onrender.com/kakao_login/"
-LOGOUT_REDIRECT_URI = "https://workexperience.onrender.com/"
+LOGIN_REDIRECT_URI = "http://localhost:8000/kakao_login/"
+LOGOUT_REDIRECT_URI = "http://localhost:8000/"
+# LOGIN_REDIRECT_URI = "https://workexperience.onrender.com/kakao_login/"
+# LOGOUT_REDIRECT_URI = "https://workexperience.onrender.com/"
 
 def main(request):
     return render(request, 'main.html')
-
-def recent(request):
-    recent_homes = []  # 실제 로직으로 변경 필요
-    return render(request, 'recent.html', {'recent_homes': recent_homes})
-
-def scrapped(request):
-    scrapped_homes = []  # 실제 로직으로 변경 필요
-    return render(request, 'scrapped.html', {'scrapped_homes': scrapped_homes})
-
-def reviews(request):
-    user_reviews = []  # 실제 로직으로 변경 필요
-    return render(request, 'reviews.html', {'user_reviews': user_reviews})
-
-def add_profile(request):
-    if request.method == 'POST':
-        protected_form = ProtectedProfileForm(request.POST)
-
-        if protected_form.is_valid():
-            # 피보호자 저장
-            protected_profile = protected_form.save(commit=False)
-            protected_profile.user = request.user
-            protected_profile.save()
-
-            return redirect('main')
-    else:
-        protected_form = ProtectedProfileForm()
-
-    return render(request, 'add_profile.html', {
-        'protected_form': protected_form
-    })
 
 def kakao_login(request):
     # 카카오 인증 코드가 있는지 확인
@@ -78,9 +48,8 @@ def kakao_login(request):
         request.session['nickname'] = profile_data.get('nickname', 'Unknown')
 
         # 사용자 정보로 User 모델에 저장 (없으면 생성)
-        username = str(request.session['kakao_id'])
         user, created = User.objects.get_or_create(
-            username=username
+            username=str(request.session['kakao_id'])
         )
         if not SelfProfile.objects.filter(user=user).exists():
             SelfProfile.objects.create(
@@ -124,6 +93,7 @@ def kakao_unlink(request):
 def search(request):
     return render(request, 'search.html')
 
+@login_required
 def mypage(request):
     self_profile = SelfProfile.objects.get(user=request.user)
     protected_profiles = ProtectedProfile.objects.filter(user=request.user)
@@ -133,6 +103,72 @@ def mypage(request):
         'protected_profiles': protected_profiles
     })
 
+@login_required
+def recent(request):
+    recent_homes = []  # 실제 로직으로 변경 필요
+    return render(request, 'recent.html', {'recent_homes': recent_homes})
+
+@login_required
+def scrapped(request):
+    scrapped_homes = []  # 실제 로직으로 변경 필요
+    return render(request, 'scrapped.html', {'scrapped_homes': scrapped_homes})
+
+@login_required
+def reviews(request):
+    user_reviews = []  # 실제 로직으로 변경 필요
+    return render(request, 'reviews.html', {'user_reviews': user_reviews})
+
+@login_required
+def add_profile(request):
+    if request.method == 'POST':
+        protected_form = ProtectedProfileForm(request.POST)
+
+        if protected_form.is_valid():
+            # 피보호자 저장
+            protected_profile = protected_form.save(commit=False)
+            protected_profile.user = request.user
+            protected_profile.save()
+
+            return redirect('main')
+    else:
+        protected_form = ProtectedProfileForm()
+
+    return render(request, 'add_profile.html', {
+        'protected_form': protected_form
+    })
+
+@login_required
+def edit_profile(request, profile_id):
+    profile = ProtectedProfile.objects.get(id=profile_id, user=request.user)
+
+    if request.method == 'POST':
+        form = ProtectedProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '프로필이 성공적으로 수정되었습니다.')
+            return redirect('mypage')
+    else:
+        form = ProtectedProfileForm(instance=profile)
+
+    return render(request, 'edit_profile.html', {
+        'form': form,
+        'profile': profile
+    })
+
+@login_required
+def delete_profile(request, profile_id):
+    profile = ProtectedProfile.objects.get(id=profile_id, user=request.user)
+    if request.method == 'POST':
+        profile.delete()
+        messages.success(request, '프로필이 성공적으로 삭제되었습니다.')
+        return redirect('mypage')
+    
+    return render(request, 'delete_profile.html', {
+        'profile': profile
+    })
+
+
+@login_required
 def survey(request):
     if request.method == 'POST':
         protected_form = ProtectedProfileForm(request.POST)
