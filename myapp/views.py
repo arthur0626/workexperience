@@ -11,8 +11,8 @@ from django.contrib.auth.decorators import login_required
 REST_API_KEY = "a9e637eee7e057c532f2fc68ef7441fb"
 # LOGIN_REDIRECT_URI = "http://localhost:8000/kakao_login/"
 # LOGOUT_REDIRECT_URI = "http://localhost:8000/"
-LOGIN_REDIRECT_URI = "https://render.com/workexperience/kakao_login/"
-LOGOUT_REDIRECT_URI = "https://render.com/workexperience/"
+LOGIN_REDIRECT_URI = "https://workexperience.onrender.com/kakao_login/"
+LOGOUT_REDIRECT_URI = "https://workexperience.onrender.com/"
 
 def main(request):
     return render(request, 'main.html')
