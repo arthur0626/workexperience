@@ -10,7 +10,7 @@ def validate_korean_only(value):
     
 class ProtectedProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='protected_profile')
-    number = models.PositiveIntegerField(blank=False, null=False)
+    number = models.PositiveIntegerField(blank=True, null=True)
     name = models.CharField(max_length=100, blank=False, null=False, validators=[validate_korean_only])
     age = models.PositiveIntegerField(blank=False, null=False)
     sex = models.CharField(choices=[('남', '남'), ('여', '여')], default='남')
