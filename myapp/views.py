@@ -9,10 +9,10 @@ from django.contrib.auth.decorators import login_required
 
 # 카카오 API 설정
 REST_API_KEY = "a9e637eee7e057c532f2fc68ef7441fb"
-LOGIN_REDIRECT_URI = "http://localhost:8000/kakao_login/"
-LOGOUT_REDIRECT_URI = "http://localhost:8000/"
-# LOGIN_REDIRECT_URI = "https://render.com/workexperience/kakao_login/"
-# LOGOUT_REDIRECT_URI = "https://render.com/workexperience/"
+# LOGIN_REDIRECT_URI = "http://localhost:8000/kakao_login/"
+# LOGOUT_REDIRECT_URI = "http://localhost:8000/"
+LOGIN_REDIRECT_URI = "https://render.com/workexperience/kakao_login/"
+LOGOUT_REDIRECT_URI = "https://render.com/workexperience/"
 
 def main(request):
     return render(request, 'main.html')
@@ -31,16 +31,21 @@ def reviews(request):
 
 def add_profile(request):
     if request.method == 'POST':
-        form = ProtectedProfileForm(request.POST)
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = request.user
-            profile.save()
+        protected_form = ProtectedProfileForm(request.POST)
+
+        if protected_form.is_valid():
+            # 피보호자 저장
+            protected_profile = protected_form.save(commit=False)
+            protected_profile.user = request.user
+            protected_profile.save()
+
             return redirect('main')
     else:
-        form = ProtectedProfileForm()
+        protected_form = ProtectedProfileForm()
 
-    return render(request, 'add_profile.html', {'form': form})
+    return render(request, 'add_profile.html', {
+        'protected_form': protected_form
+    })
 
 def kakao_login(request):
     # 카카오 인증 코드가 있는지 확인

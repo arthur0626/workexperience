@@ -463,58 +463,13 @@
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <div class="logo">🧭 돌봄 나침반</div>
                 <div class="nav-buttons">
-                    <button class="btn btn-primary" onclick="openLoginModal()">회원가입</button>
-                    <button class="btn btn-secondary" onclick="openLoginModal()">로그인</button>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'mypage' %}"><button>내 정보</button></a>
+                        <a href="{% url 'kakao_logout' %}"><button>로그아웃</button></a>
+                    {% else %}
+                        <a href="{% url 'kakao_login' %}"><button>카카오톡으로 계속</button></a>
+                    {% endif %}
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 로그인 모달 -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('loginModal')">&times;</span>
-            <div class="modal-title">환영합니다!</div>
-            <div class="modal-subtitle">돌봄 나침반입니다</div>
-            <button class="kakao-login-btn" onclick="openKakaoModal()">카카오로 회원가입하기</button>
-            <button class="general-login-btn">로그인</button>
-        </div>
-    </div>
-    
-    <!-- 카카오 로그인 모달 -->
-    <div id="kakaoModal" class="modal kakao-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('kakaoModal')">&times;</span>
-            <div class="kakao-header">
-                <div class="kakao-logo">kakao</div>
-                <div class="kakao-subtitle">카카오로 빠르고, 더 쉽게, 간편한으로</div>
-                <div class="kakao-subtitle">빠르게</div>
-            </div>
-            <div class="input-group">
-                <input type="text" placeholder="카카오계정 (이메일 또는 전화번호)">
-            </div>
-            <div class="input-group">
-                <input type="password" placeholder="비밀번호">
-            </div>
-            <div class="remember-me">
-                <input type="checkbox" id="remember">
-                <label for="remember">자동로그인 체크 해제 ⓘ</label>
-            </div>
-            <button class="kakao-login-submit">로그인</button>
-            <div class="divider">또는</div>
-            <div class="social-login">
-                <button class="social-btn">애플로 로그인</button>
-                <button class="social-btn">QR코드 로그인</button>
-            </div>
-            <div class="footer-links">
-                <a href="#">카카오계정</a> | 
-                <a href="#">비밀번호 찾기</a> | 
-                <a href="#">회원가입</a> | 
-                <a href="#">고객센터</a> |
-                <div style="margin-top: 10px;">
-                    <a href="#">이용약관</a> | <a href="#">개인정보 처리방침</a> | <a href="#">운영정책</a> | <a href="#">청소년보호정책</a> - 고객지원
-                </div>
-                <div style="margin-top: 5px;">ⓒ Kakao Corp.</div>
             </div>
         </div>
     </div>

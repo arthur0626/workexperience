@@ -1,14 +1,7 @@
-<h2>처음 가입하셨네요! 프로필 정보를 입력해주세요</h2>
+<h2>환영합니다! 피보호자 프로필 정보를 입력해주세요</h2>
 <form method="post">
   {% csrf_token %}
   {{ protected_form.as_p }}
   <button type="submit">저장</button>
+  <button type="button" onclick="location.href='{% url 'main' %}'">다음에</button>
 </form>
-
-{% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li class="{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}

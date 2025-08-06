@@ -1,4 +1,5 @@
 <h2>내 정보</h2>
+<button onclick="location.href='{% url 'main' %}'">돌아가기</button>
 
 <!-- 🔼 2. 상단: 카카오 닉네임/프로필 -->
     <p><strong> 환영합니다. {{ self_profile.name }} 님! </strong> </p>
@@ -17,7 +18,7 @@
 </div>
 
 <!-- 🧓 4. 하단: 프로필 카드들 -->
-<h3>작성한 보호자/피보호자 프로필</h3>
+<h3>작성한 피보호자 프로필</h3>
 {% if protected_profiles %}
   <div style="display: flex; gap: 20px; flex-wrap: wrap;">
     {% for profile in protected_profiles %}
@@ -25,11 +26,12 @@
         <p><strong>이름:</strong> {{ profile.name }}</p>
         <p><strong>성별:</strong> {{ profile.gender }}</p>
         <p><strong>나이:</strong> {{ profile.age }}</p>
-        <p><strong>건강상태:</strong> {{ profile.health_status }}</p>
+        <p><strong>건강상태:</strong> {{ profile.health_conditions }}</p>
         <p><strong>보호자 여부:</strong> {{ profile.guardian }}</p>
         <p><strong>선호 지역:</strong> {{ profile.preferred_location }}</p>
         <p><strong>예산 범위:</strong> {{ profile.budget }}</p>
-        <p><strong>희망 서비스:</strong> {{ profile.service }}</p>
+        <p><strong>희망 서비스:</strong> {{ profile.preferred_services }}</p>
+        <p><strong>기타사항:</strong> {{ profile.additional_info }}</p>
       </div>
     {% endfor %}
   </div>
@@ -38,7 +40,7 @@
 {% endif %}
 
 <!-- ➕ 프로필 추가 버튼 -->
-<form action="{% url 'survey' %}" style="margin-top: 20px;">
+<form action="{% url 'add_profile' %}" style="margin-top: 20px;">
   <button type="submit">+ 프로필 추가</button>
 </form>
 

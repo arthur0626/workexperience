@@ -1,0 +1,7 @@
+<h2>피보호자 프로필 정보를 입력해주세요</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ protected_form.as_p }}
+  <button type="submit" onclick="location.href='{% url 'main' %}'">저장</button>
+  <button type="button" onclick="location.href='{% url 'mypage' %}'">취소</button>
+</form>
