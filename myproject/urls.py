@@ -27,4 +27,9 @@ urlpatterns = [
     path("survey/", views.survey, name='survey'),
     path("kakao_login/", views.kakao_login, name='kakao_login'),
     path("kakao_logout/", views.kakao_logout, name='kakao_logout'),
+    path("kakao_unlink/", views.kakao_unlink, name='kakao_unlink'),
+    path("recent/", views.recent, name='recent'),
+    path("scrapped/", views.scrapped, name='scrapped'),
+    path("reviews/", views.reviews, name='reviews'),
+    path("add_profile/", views.add_profile, name='add_profile'),
 ]

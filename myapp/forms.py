@@ -1,7 +1,12 @@
 from django import forms
-from .models import UserSurvey
+from .models import ProtectedProfile, SelfProfile
 
-class UserSurveyForm(forms.ModelForm):
+class ProtectedProfileForm(forms.ModelForm):
     class Meta:
-        model = UserSurvey
-        fields = ['preferred_location', 'budget', 'facilities']
+        model = ProtectedProfile
+        fields = ['name', 'age', 'sex', 'guardian', 'preferred_location', 'budget', 'preferred_services', 'health_conditions', 'additional_info']
+
+class SelfProfileForm(forms.ModelForm):
+    class Meta:
+        model = SelfProfile
+        fields = ['kakao_id', 'name', 'scrapped', 'recent', 'reviews']
