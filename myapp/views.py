@@ -78,8 +78,9 @@ def kakao_login(request):
         request.session['nickname'] = profile_data.get('nickname', 'Unknown')
 
         # 사용자 정보로 User 모델에 저장 (없으면 생성)
+        username = str(request.session['kakao_id'])
         user, created = User.objects.get_or_create(
-            id=request.session['kakao_id'],
+            username=username
         )
         if not SelfProfile.objects.filter(user=user).exists():
             SelfProfile.objects.create(
