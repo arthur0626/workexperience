@@ -1,7 +1,137 @@
 <h2>피보호자 프로필 정보를 입력해주세요</h2>
 <form method="post">
-  {% csrf_token %}
-  {{ protected_form.as_p }}
-  <button type="submit">저장</button>
-  <button type="button" onclick="location.href='{% url 'mypage' %}'">취소</button>
+    {% csrf_token %}
+    {% load static %}
+    <html>
+    <head>
+        <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+        <style>
+            /* 레이아웃을 위한 간단한 CSS */
+            .form-section {
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                padding: 15px;
+                border-radius: 5px;
+            }
+            .form-row {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                margin-bottom: 10px;
+            }
+            .form-row label {
+                min-width: 80px;
+            }
+            .form-row input[type="text"],
+            .form-row input[type="number"],
+            .form-row textarea {
+                flex-grow: 1;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            .radio-group {
+                display: flex;
+                gap: 15px;
+            }
+            .radio-group label {
+                min-width: auto;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="form-section">
+            <div class="form-row">
+                <label for="id_name">이름:</label>
+                <input type="text" id="id_name" name="name" required value="{{ profile.name|default:'' }}">
+                
+                <label>성별:</label>
+                <div class="radio-group">
+                    <input type="radio" id="id_sex_남" name="sex" value="남" {% if profile.sex == '남' %}checked{% endif %}>
+                    <label for="id_sex_남">남</label>
+                    <input type="radio" id="id_sex_여" name="sex" value="여" {% if profile.sex == '여' %}checked{% endif %}>
+                    <label for="id_sex_여">여</label>
+                </div>
+
+                <label for="id_age">나이:</label>
+                <input type="number" id="id_age" name="age" required value="{{ profile.age|default:'' }}" min="0" max="120" placeholder="나이를 입력해주세요">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-row">
+                <label>보호자여부:</label>
+                <div class="radio-group">
+                    <input type="radio" id="id_guardian_유" name="guardian" value="유" {% if profile.guardian == '유' %}checked{% endif %}>
+                    <label for="id_guardian_유">유</label>
+                    <input type="radio" id="id_guardian_무" name="guardian" value="무" {% if profile.guardian == '무' %}checked{% endif %}>
+                    <label for="id_guardian_무">무</label>
+                </div>
+            </div>
+            <div class="form-row">
+                <label>예산 범위 (단위: 십만원):</label>
+                <input type="number" id="budget_min" name="budget_min" placeholder="최소 예산 (예: 10 입력 시 100만원)" value="{{ profile.budget_min|default:'' }}">
+                <span> - </span>
+                <input type="number" id="budget_max" name="budget_max" placeholder="최대 예산 (예: 30 입력 시 300만원)" value="{{ profile.budget_max|default:'' }}">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-row">
+                <label for="address">주소:</label>
+                <input type="text" id="address" name="address" readonly value="{{ profile.address|default:'' }}">
+                <button type="button" id="search_address">주소 검색</button>
+            </div>
+            <div class="form-row">
+                <label for="address_detail">상세주소:</label>
+                <input type="text" id="address_detail" name="address_detail" placeholder="상세주소를 입력해주세요" value="{{ profile.address_detail|default:'' }}">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-row">
+                <label for="id_preferred_services">희망 서비스:</label>
+                <textarea id="id_preferred_services" name="preferred_services" rows="4">{{ profile.preferred_services|default:'' }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-row">
+                <label for="id_health_conditions">건강상태:</label>
+                <textarea id="id_health_conditions" name="health_conditions" rows="4">{{ profile.health_conditions|default:'' }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-row">
+                <label for="id_additional_info">기타사항:</label>
+                <textarea id="id_additional_info" name="additional_info" rows="4">{{ profile.additional_info|default:'' }}</textarea>
+            </div>
+        </div>
+        
+        <button type="submit">작성 완료</button>
+        <button type="button" onclick="location.href='{% url 'mypage' %}'">취소</button>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const btn = document.getElementById("search_address");
+                if (btn) {
+                    btn.addEventListener("click", function () {
+                        new daum.Postcode({
+                            oncomplete: function (data) {
+                                var fullAddr = data.address;
+                                document.getElementById("address").value = fullAddr;
+                                document.getElementById("address_detail").focus();
+                            }
+                        }).open();
+                    });
+                } else {
+                    console.error("#search_address 버튼을 찾을 수 없습니다.");
+                }
+            });
+        </script>
+    </body>
+    </html>
 </form>

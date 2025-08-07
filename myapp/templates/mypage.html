@@ -30,8 +30,8 @@
 
         <p><strong><br>상세정보</strong></p>
         <p>보호자 여부: {{ profile.guardian }}</p>
-        <p>예산 범위: {{ profile.budget_max }} - {{ profile.budget_min }}</p>
-        <p>선호 지역: {{ profile.preferred_location }}</p>
+        <p>예산 범위: {{ profile.budget_min }}0,0000 - {{ profile.budget_max }}0,0000</p>
+        <p>선호 지역: {{ profile.address }} {{ profile.address_detail }}</p>
         <p>희망 서비스: {{ profile.preferred_services }}</p>
         <p>건강상태: {{ profile.health_conditions }}</p>
         <p>기타사항: {{ profile.additional_info }}</p>

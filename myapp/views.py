@@ -2,17 +2,11 @@ import requests
 from .forms import ProtectedProfileForm, SelfProfileForm
 from .models import ProtectedProfile, SelfProfile
 from django.shortcuts import render, redirect
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
-# 카카오 API 설정
-REST_API_KEY = "a9e637eee7e057c532f2fc68ef7441fb"
-# LOGIN_REDIRECT_URI = "http://localhost:8000/kakao_login/"
-# LOGOUT_REDIRECT_URI = "http://localhost:8000/"
-LOGIN_REDIRECT_URI = "https://workexperience.onrender.com/kakao_login/"
-LOGOUT_REDIRECT_URI = "https://workexperience.onrender.com/"
 
 def main(request):
     return render(request, 'main.html')
@@ -26,8 +20,8 @@ def kakao_login(request):
         url = "https://kauth.kakao.com/oauth/token", 
         data = {
             'grant_type': 'authorization_code',
-            'client_id': REST_API_KEY,
-            'redirect_uri': LOGIN_REDIRECT_URI,
+            'client_id': settings.REST_API_KEY,
+            'redirect_uri': settings.LOGIN_REDIRECT_URI,
             'code': request.GET.get('code'),
         })
 
@@ -66,11 +60,11 @@ def kakao_login(request):
         return redirect(next_page)
     else:
         # 인증 코드가 없으면 카카오 로그인 페이지로 리다이렉트
-        return redirect(f'https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={LOGIN_REDIRECT_URI}&response_type=code&scope=openid')
+        return redirect(f'https://kauth.kakao.com/oauth/authorize?client_id={settings.REST_API_KEY}&redirect_uri={settings.LOGIN_REDIRECT_URI}&response_type=code&scope=openid')
 
 def kakao_logout(request):
     logout(request)
-    kakao_logout_url = f"https://kauth.kakao.com/oauth/logout?client_id={REST_API_KEY}&logout_redirect_uri={LOGOUT_REDIRECT_URI}"
+    kakao_logout_url = f"https://kauth.kakao.com/oauth/logout?client_id={settings.REST_API_KEY}&logout_redirect_uri={settings.LOGOUT_REDIRECT_URI}"
     return redirect('main')
 
 def kakao_unlink(request):
@@ -129,7 +123,7 @@ def add_profile(request):
             protected_profile.user = request.user
             protected_profile.save()
 
-            return redirect('main')
+            return redirect('mypage')
     else:
         protected_form = ProtectedProfileForm()
 
@@ -145,7 +139,6 @@ def edit_profile(request, profile_id):
         form = ProtectedProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
-            messages.success(request, '프로필이 성공적으로 수정되었습니다.')
             return redirect('mypage')
     else:
         form = ProtectedProfileForm(instance=profile)
@@ -160,7 +153,6 @@ def delete_profile(request, profile_id):
     profile = ProtectedProfile.objects.get(id=profile_id, user=request.user)
     if request.method == 'POST':
         profile.delete()
-        messages.success(request, '프로필이 성공적으로 삭제되었습니다.')
         return redirect('mypage')
     
     return render(request, 'delete_profile.html', {
