@@ -47,3 +47,59 @@ class SelfProfile(models.Model):
 
     def __str__(self):
         return f"{self.name} (자신)"
+
+from django.db import models
+
+class SilverCareFacility(models.Model):
+    # 기본 정보
+    facility_name = models.CharField(max_length=200, verbose_name="시설명")
+    institution_type = models.CharField(max_length=100, verbose_name="기관유형")
+    address = models.CharField(max_length=255, verbose_name="주소")
+    phone_number = models.CharField(max_length=20, verbose_name="전화번호", blank=True, null=True)
+    homepage = models.URLField(verbose_name="홈페이지", blank=True, null=True)
+    designation_date = models.DateField(verbose_name="장기요양기관지정일", blank=True, null=True)
+    transportation = models.CharField(max_length=255, verbose_name="교통편", blank=True, null=True)
+    parking_facility = models.CharField(max_length=100, verbose_name="주차시설", blank=True, null=True)
+
+    # 인원 정보
+    capacity = models.IntegerField(default=0, verbose_name="정원")
+    current_male = models.IntegerField(default=0, verbose_name="현원(남)")
+    current_female = models.IntegerField(default=0, verbose_name="현원(여)")
+    waiting_male = models.IntegerField(default=0, verbose_name="대기(남)")
+    waiting_female = models.IntegerField(default=0, verbose_name="대기(여)")
+
+    # 요양보호사 및 직원 정보
+    caregiver_type1 = models.IntegerField(default=0, verbose_name="재가노인복지시설방문요양-요양보호사-1급")
+    caregiver_type2 = models.IntegerField(default=0, verbose_name="재가노인복지시설방문요양-요양보호사-2급")
+    caregiver_suspended = models.IntegerField(default=0, verbose_name="재가노인복지시설방문요양-요양보호사-유예")
+    longterm_caregiver_type1 = models.IntegerField(default=0, verbose_name="재가장기요양기관방문요양-요양보호사-1급")
+    longterm_caregiver_type2 = models.IntegerField(default=0, verbose_name="재가장기요양기관방문요양-요양보호사-2급")
+    longterm_caregiver_suspended = models.IntegerField(default=0, verbose_name="재가장기요양기관방문요양-요양보호사-유예")
+
+    nurse = models.IntegerField(default=0, verbose_name="간호사")
+    nursing_assistant = models.IntegerField(default=0, verbose_name="간호조무사")
+    contract = models.IntegerField(default=0, verbose_name="계약")
+    manager = models.IntegerField(default=0, verbose_name="관리인")
+    physical_therapist = models.IntegerField(default=0, verbose_name="물리치료사")
+    assistant = models.IntegerField(default=0, verbose_name="보조원")
+    general_manager = models.IntegerField(default=0, verbose_name="사무국장")
+    office = models.IntegerField(default=0, verbose_name="사무실")
+    office_worker = models.IntegerField(default=0, verbose_name="사무원")
+    social_worker = models.IntegerField(default=0, verbose_name="사회복지사")
+    washing_room = models.IntegerField(default=0, verbose_name="세면/세탁실")
+    head_of_facility = models.IntegerField(default=0, verbose_name="시설장")
+    nutritionist = models.IntegerField(default=0, verbose_name="영양사")
+    sanitation_worker = models.IntegerField(default=0, verbose_name="위생원")
+    suspended = models.IntegerField(default=0, verbose_name="유예")
+    occupational_therapist = models.IntegerField(default=0, verbose_name="작업치료사")
+    day_night_care = models.IntegerField(default=0, verbose_name="재가노인복지시설주야간보호")
+    cook = models.IntegerField(default=0, verbose_name="조리원")
+    bedroom = models.IntegerField(default=0, verbose_name="침실")
+    toilet = models.IntegerField(default=0, verbose_name="화장실")
+
+    def __str__(self):
+        return self.facility_name
+
+    class Meta:
+        verbose_name = "실버케어 시설"
+        verbose_name_plural = "실버케어 시설 목록"

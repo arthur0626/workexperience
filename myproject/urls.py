@@ -22,7 +22,7 @@ from myapp import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("",views.main, name='main'),
-    path("search/", views.search, name='search'),
+    path('api/search/', views.search_facilities_ajax, name='search_facilities_ajax'),  # AJAX 검색용
     path("mypage/", views.mypage, name='mypage'),
     path("survey/", views.survey, name='survey'),
     path("kakao_login/", views.kakao_login, name='kakao_login'),

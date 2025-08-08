@@ -1,15 +1,16 @@
+import os
 import requests
+import pandas as pd
+import json
 from .forms import ProtectedProfileForm, SelfProfileForm
 from .models import ProtectedProfile, SelfProfile
 from django.shortcuts import render, redirect
+from django.http import Http404, JsonResponse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
-def main(request):
-    return render(request, 'main.html')
 
 def kakao_login(request):
     # 카카오 인증 코드가 있는지 확인
@@ -83,9 +84,92 @@ def kakao_unlink(request):
     request.session.flush()
 
     return redirect('main')
-    
-def search(request):
-    return render(request, 'search.html')
+
+def main(request):
+    """
+    CSV 파일을 읽어와 시설명을 검색하고 결과를 템플릿에 전달하는 뷰.
+    """
+    # GET 요청에서 'q'라는 이름의 쿼리 파라미터(검색어)를 가져옵니다.
+    search_query = request.GET.get('q', '').strip()
+    context = {
+        'search_query': search_query,
+        'results': [],
+        'results_count': 0
+    }
+
+    # CSV 파일의 절대 경로를 구성합니다.
+    csv_file_path = os.path.join(settings.BASE_DIR, 'myapp', 'static', 'csv', 'output_combined_final.csv')
+
+    # 검색 쿼리가 있을 경우에만 검색을 수행합니다.
+    if search_query:
+        try:
+            # pandas 라이브러리를 사용하여 CSV 파일을 DataFrame으로 읽습니다.
+            df = pd.read_csv(csv_file_path, encoding='utf-8')
+
+            # '시설명' 컬럼에서 검색어를 포함하는 행을 찾습니다.
+            search_results = df[df['시설명'].str.contains(search_query, na=False, case=False)]
+
+            # 결과를 딕셔너리 리스트로 변환
+            results = search_results.to_dict('records')
+            
+            # NaN 값을 None으로 변환 (JSON 직렬화를 위해)
+            for result in results:
+                for key, value in result.items():
+                    if pd.isna(value):
+                        result[key] = None
+            
+            context['results'] = results
+            context['results_count'] = len(results)
+
+        except FileNotFoundError:
+            context['error'] = f"CSV 파일을 찾을 수 없습니다: {csv_file_path}"
+        except Exception as e:
+            context['error'] = f"파일 처리 중 오류가 발생했습니다: {str(e)}"
+
+    return render(request, 'main.html', context)
+
+def search_facilities_ajax(request):
+    """
+    AJAX 요청을 위한 검색 API
+    """
+    if request.method == 'GET':
+        search_query = request.GET.get('q', '').strip()
+        
+        if not search_query:
+            return JsonResponse({
+                'results': [],
+                'results_count': 0,
+                'search_query': search_query
+            })
+
+        csv_file_path = os.path.join(settings.BASE_DIR, 'myapp', 'static', 'csv', 'output_combined_final.csv')
+
+        try:
+            df = pd.read_csv(csv_file_path, encoding='utf-8')
+            search_results = df[df['시설명'].str.contains(search_query, na=False, case=False)]
+            results = search_results.to_dict('records')
+            
+            # NaN 값을 None으로 변환
+            for result in results:
+                for key, value in result.items():
+                    if pd.isna(value):
+                        result[key] = None
+            
+            return JsonResponse({
+                'results': results,
+                'results_count': len(results),
+                'search_query': search_query
+            })
+
+        except Exception as e:
+            return JsonResponse({
+                'error': f"검색 중 오류가 발생했습니다: {str(e)}",
+                'results': [],
+                'results_count': 0,
+                'search_query': search_query
+            }, status=500)
+
+    return JsonResponse({'error': 'GET 요청만 지원됩니다.'}, status=405)
 
 @login_required
 def mypage(request):
@@ -158,7 +242,6 @@ def delete_profile(request, profile_id):
     return render(request, 'delete_profile.html', {
         'profile': profile
     })
-
 
 @login_required
 def survey(request):
