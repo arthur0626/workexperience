@@ -1,4 +1,3 @@
-<h2>환영합니다! 피보호자 프로필 정보를 입력해주세요</h2>
 <form method="post">
     {% csrf_token %}
     {% load static %}
@@ -111,8 +110,8 @@
             </div>
         </div>
         
-        <button type="submit">저장</button>
-        <button type="button" onclick="location.href='{% url 'main' %}'">다음에</button>
+        <button type="submit">수정 완료</button>
+        <button type="button" onclick="location.href='{% url 'mypage' %}'">취소</button>
         
         <script>
             document.addEventListener("DOMContentLoaded", function () {

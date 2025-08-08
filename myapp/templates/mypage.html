@@ -1,13 +1,68 @@
 <h2>내 정보</h2>
+<button onclick="location.href='{% url 'main' %}'">돌아가기</button>
 
-{% if survey %}
-  <p><strong>닉네임:</strong> {{ request.user.first_name }}</p>
-  {% if survey.profile_image_url %}
-    <p><img src="{{ survey.profile_image_url }}" alt="프로필 이미지" style="width:100px; height:auto; border-radius:50%;"></p>
-  {% endif %}
-  <p><strong>선호 지역:</strong> {{ survey.preferred_location }}</p>
-  <p><strong>예산:</strong> {{ survey.budget }}</p>
-  <p><strong>원하는 시설:</strong> {{ survey.facilities }}</p>
+<!-- 🔼 2. 상단: 카카오 닉네임/프로필 -->
+    <p><strong> 환영합니다. {{ self_profile.name }} 님! </strong> </p>
+
+<!-- 🔳 3. 중간: 버튼 일렬 배치 -->
+<div style="display: flex; gap: 10px; margin: 20px 0;">
+  <form action="{% url 'recent' %}">
+    <button type="submit">최근 본 요양원</button>
+  </form>
+  <form action="{% url 'scrapped' %}">
+    <button type="submit">스크랩한 요양원</button>
+  </form>
+  <form action="{% url 'reviews' %}">
+    <button type="submit">내 리뷰</button>
+  </form>
+</div>
+
+<!-- 🧓 4. 하단: 프로필 카드들 -->
+<h3>작성한 피보호자 프로필</h3>
+{% if protected_profiles %}
+  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    {% for profile in protected_profiles %}
+      <div style="border: 1px solid #ccc; padding: 10px; border-radius: 10px;">
+        <p><strong> {{ profile.number }} 번 프로필 </strong></p>
+        <p>이름: {{ profile.name }}</p>
+        <p>성별: {{ profile.sex }}</p>
+        <p>나이: {{ profile.age }}</p>
+
+        <p><strong><br>상세정보</strong></p>
+        <p>보호자 여부: {{ profile.guardian }}</p>
+        <p>예산 범위: {{ profile.budget_min }}0,0000 - {{ profile.budget_max }}0,0000</p>
+        <p>선호 지역: {{ profile.address }} {{ profile.address_detail }}</p>
+        <p>희망 서비스: {{ profile.preferred_services }}</p>
+        <p>건강상태: {{ profile.health_conditions }}</p>
+        <p>기타사항: {{ profile.additional_info }}</p>
+        <button onclick="location.href='{% url 'edit_profile' profile.id %}'">수정</button>
+        <form action="{% url 'delete_profile' profile.id %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" style="background-color: red; color: white;">삭제</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
 {% else %}
-  <p>설문 내역이 없습니다.</p>
+  <p>아직 등록된 프로필이 없습니다.</p>
+{% endif %}
+
+<!-- ➕ 프로필 추가 버튼 -->
+<form action="{% url 'add_profile' %}" style="margin-top: 20px;">
+  <button type="submit">+ 프로필 추가</button>
+</form>
+
+<!-- ⛔ 1. 하단: 카카오톡 탈퇴하기 버튼 -->
+<hr>
+<form action="{% url 'kakao_unlink' %}" method="post">
+  {% csrf_token %}
+  <button type="submit" style="background-color: red; color: white;">카카오톡 탈퇴하기</button>
+</form>
+
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
 {% endif %}
