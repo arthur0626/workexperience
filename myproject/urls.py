@@ -34,4 +34,5 @@ urlpatterns = [
     path("add_profile/", views.add_profile, name='add_profile'),
     path("edit_profile/<int:profile_id>/", views.edit_profile, name='edit_profile'),
     path("delete_profile/<int:profile_id>/", views.delete_profile, name='delete_profile'),
+    path("mypage2/", views.mypage2, name='mypage2')
 ]

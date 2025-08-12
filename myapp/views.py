@@ -261,3 +261,14 @@ def survey(request):
     return render(request, 'survey.html', {
         'protected_form': protected_form
     })
+
+
+@login_required
+def mypage2(request):
+    self_profile = SelfProfile.objects.get(user=request.user)
+    protected_profiles = ProtectedProfile.objects.filter(user=request.user)
+
+    return render(request, 'mypage2.html', {
+        'self_profile': self_profile,
+        'protected_profiles': protected_profiles
+    }) 

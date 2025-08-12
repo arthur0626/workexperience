@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>돌봄 나침반 - 마이페이지</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 헤더 - 메인페이지와 동일한 스타일 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+            background: white;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #7c3aed;
+            cursor: pointer;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #7c3aed;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #7c3aed;
+            border: 2px solid #7c3aed;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+        
+        /* 콘텐츠 섹션 전환 */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        /* 메인화면 스타일 */
+        .search-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .search-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-form {
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: #7c3aed;
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #7c3aed;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+        }
+        
+        /* 카테고리 그리드 */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .category-item {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .category-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .category-circle {
+            width: 120px;
+            height: 120px;
+            background: #7c3aed;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .category-name {
+            font-size: 16px;
+            color: #333;
+        }
+        
+        /* 마이페이지 스타일 - 원본과 유사하게 */
+        .page-title {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #7c3aed;
+            margin-bottom: 20px;
+            padding: 10px 0;
+        }
+        
+        .back-button:hover {
+            text-decoration: underline;
+        }
+        
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .profile-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .company-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .profile-nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn.active {
+            background: #7c3aed;
+            color: white;
+            border-color: #7c3aed;
+        }
+        
+        .nav-btn:not(.active):hover {
+            border-color: #7c3aed;
+            color: #7c3aed;
+        }
+        
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .basic-info {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+        }
+        
+        .name {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .basic-details {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        .basic-details div {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .detailed-info {
+            background: white;
+            padding: 20px 0;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .info-grid {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            padding: 12px 0;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #333;
+            width: 140px;
+            flex-shrink: 0;
+        }
+        
+        .info-value {
+            color: #666;
+            flex: 1;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit {
+            background: #7c3aed;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #6c2bd9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+        
+        .btn-delete {
+            background: #ea4335;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #d33b2c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(234, 67, 53, 0.3);
+        }
+        
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .profile-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .profile-nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+            
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 - 메인페이지와 동일 -->
+    <div class="header">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div class="logo" onclick="showMainContent()">🧭 돌봄 나침반</div>
+                <div class="nav-buttons">
+                    <a href="#" onclick="showMyPage()" class="btn btn-secondary">마이페이지</a>
+                    <a href="#" class="btn btn-primary">로그아웃</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 메인화면 -->
+        <div id="main-content" class="content-section active">
+            <!-- 검색 섹션 -->
+            <div class="search-section">
+                <h2 class="search-title">원하는 요양원을 알아볼까요?</h2>
+                <div class="search-box">
+                    <form method="GET" action="" class="search-form">
+                        <input type="text" name="q" class="search-input" 
+                               placeholder="시설명을 입력해주세요">
+                        <button type="submit" class="search-btn">🔍</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 카테고리 섹션 -->
+            <div class="category-section">
+                <div class="category-grid">
+                    <div class="category-item">
+                        <div class="category-circle">요양원</div>
+                        <div class="category-name">요양원</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">양로원</div>
+                        <div class="category-name">양로원</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">사회복지시설</div>
+                        <div class="category-name">사회복지시설</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">요양병원</div>
+                        <div class="category-name">요양병원</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">종교시설</div>
+                        <div class="category-name">종교시설</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">프리미엄</div>
+                        <div class="category-name">프리미엄</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-circle">셔틀운행</div>
+                        <div class="category-name">셔틀운행</div>
+                    </div>
+                    <div class="category-item" onclick="showMyPage()">
+                        <div class="category-circle">마이페이지</div>
+                        <div class="category-name">마이페이지</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 마이페이지 -->
+        <div id="mypage-content" class="content-section">
+            <div class="page-title">마이 페이지</div>
+            
+            <div class="profile-container">
+                <button class="back-button" onclick="showMainContent()">← 돌아가기</button>
+                
+                <header class="profile-header">
+                    <div class="logo-section">
+                        <div class="profile-logo">🧭</div>
+                        <div class="company-name">돌봄 나침반</div>
+                    </div>
+                    <nav class="profile-nav-buttons">
+                        <button class="nav-btn active" onclick="showMyPage()">홈</button>
+                        <button class="nav-btn">스크랩 한 모집글</button>
+                        <button class="nav-btn">작성 한 모집글</button>
+                        <button class="nav-btn">내 리뷰</button>
+                        <button class="nav-btn" onclick="showMainContent()">로그아웃</button>
+                    </nav>
+                </header>
+
+                <div class="profile-section">
+                    <div class="basic-info">
+                        <div class="name">홍길동 님</div>
+                        <div class="basic-details">
+                            <div><strong>성별:</strong> 남</div>
+                            <div><strong>나이:</strong> 25</div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-info">
+                        <h2 class="section-title">상세정보</h2>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">보호자 여부:</span>
+                                <span class="info-value">유</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">예산 범위:</span>
+                                <span class="info-value">1,000,000~3,000,000</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">선호 지역:</span>
+                                <span class="info-value">서울시 강남구</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">희망 서비스:</span>
+                                <span class="info-value">치매 전문 케어</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">건강 상태:</span>
+                                <span class="info-value">양호</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">기타 사항:</span>
+                                <span class="info-value">특별한 요구사항 없음</span>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="action-btn btn-edit">정보 수정</button>
+                            <button class="action-btn btn-delete">탈퇴하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 페이지 전환 함수
+        function showMainContent() {
+            document.getElementById('mypage-content').classList.remove('active');
+            document.getElementById('main-content').classList.add('active');
+        }
+        
+        function showMyPage() {
+            document.getElementById('main-content').classList.remove('active');
+            document.getElementById('mypage-content').classList.add('active');
+        }
+        
+        // 네비게이션 버튼 클릭 이벤트 (마이페이지 내부)
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 로그아웃 버튼이 아닌 경우에만 active 상태 변경
+                if (this.textContent.trim() !== '로그아웃') {
+                    // 모든 버튼에서 active 클래스 제거
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    // 클릭된 버튼에 active 클래스 추가
+                    this.classList.add('active');
+                }
+            });
+        });
+        
+        // 액션 버튼 클릭 이벤트
+        document.querySelector('.btn-edit').addEventListener('click', function() {
+            alert('정보 수정 페이지로 이동합니다.');
+        });
+        
+        document.querySelector('.btn-delete').addEventListener('click', function() {
+            if(confirm('정말로 탈퇴하시겠습니까?')) {
+                alert('탈퇴 처리되었습니다.');
+                showMainContent(); // 탈퇴 후 메인으로 이동
+            }
+        });
+        
+        // 호버 효과를 위한 추가 인터랙션
+        document.querySelectorAll('.info-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f8f9fa';
+                this.style.borderRadius = '8px';
+                this.style.padding = '12px';
+                this.style.margin = '2px 0';
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+                this.style.borderRadius = '';
+                this.style.padding = '12px 0';
+                this.style.margin = '';
+            });
+        });
+        
+        // 카테고리 클릭 이벤트 (마이페이지 제외)
+        document.querySelectorAll('.category-item').forEach((item, index) => {
+            if (index !== 7) { // 마이페이지(8번째)는 제외
+                item.addEventListener('click', function() {
+                    const categoryName = this.querySelector('.category-name').textContent;
+                    if (categoryName !== '마이페이지') {
+                        alert('카테고리 선택: ' + categoryName);
+                    }
+                });
+            }
+        });
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 초기에는 메인 화면 표시
+            showMainContent();
+        });
+    </script>
+</body>
+</html>
