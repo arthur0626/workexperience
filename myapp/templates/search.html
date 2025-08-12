@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>시설 검색</title>
+</head>
+<body>
+    <h1>시설 검색</h1>
+
+    <form action="{% url 'search' %}" method="get">
+        <input type="text" name="q" placeholder="시설명을 입력하세요" value="{{ search_query|default:'' }}">
+        <button type="submit">검색</button>
+    </form>
+
+    {% if search_query and results %}
+        <h2>'{{ search_query }}'에 대한 검색 결과</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>시설명</th>
+                    <th>주소</th>
+                    <th>전화번호</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for facility in results %}
+                    <tr>
+                        <td>{{ facility.시설명 }}</td>
+                        <td>{{ facility.주소 }}</td>
+                        <td>{{ facility.전화번호 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif search_query %}
+        <p>'{{ search_query }}'에 대한 검색 결과가 없습니다.</p>
+    {% endif %}
+</body>
+</html>
