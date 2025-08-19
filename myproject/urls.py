@@ -21,20 +21,15 @@ from myapp import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("",views.main, name='main'),
-    path('api/search/', views.search_facilities_ajax, name='search_facilities_ajax'),  # AJAX 검색용
+
     path("mypage/", views.mypage, name='mypage'),
     path("survey/", views.survey, name='survey'),
     path("kakao_login/", views.kakao_login, name='kakao_login'),
     path("kakao_logout/", views.kakao_logout, name='kakao_logout'),
     path("kakao_unlink/", views.kakao_unlink, name='kakao_unlink'),
-    path("recent/", views.recent, name='recent'),
-    path("scrapped/", views.scrapped, name='scrapped'),
-    path("reviews/", views.reviews, name='reviews'),
+    path("", views.main, name='main'),
     path("add_profile/", views.add_profile, name='add_profile'),
     path("edit_profile/<int:profile_id>/", views.edit_profile, name='edit_profile'),
     path("delete_profile/<int:profile_id>/", views.delete_profile, name='delete_profile'),
-    path("mypage2/", views.mypage2, name='mypage2'),
-    path("clickpage/", views.clickpage, name='clickpage'),
-    path("search/", views.search, name='search')
+    path("clickpage/<str:facility_id>/", views.clickpage, name='clickpage'),
 ]

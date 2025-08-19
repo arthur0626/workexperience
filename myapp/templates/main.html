@@ -1,368 +1,56 @@
+{% comment %} templates/search.html 수정 {% endcomment %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>요양원 추천 서비스</title>
+    <title>돌봄 나침반</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Malgun Gothic', sans-serif;
-            background-color: #f8f9fa;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        /* 헤더 */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #e9ecef;
-            background: white;
-            margin-bottom: 30px;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #7c3aed;
-        }
-        
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: #7c3aed;
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #7c3aed;
-            border: 2px solid #7c3aed;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-        }
-        
-        /* 검색 섹션 */
-        .search-section {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-        
-        .search-title {
-            font-size: 24px;
-            margin-bottom: 30px;
-            color: #333;
-        }
-        
-        .search-box {
-            position: relative;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .search-form {
-            display: flex;
-            align-items: center;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 15px 50px 15px 20px;
-            border: 2px solid #e9ecef;
-            border-radius: 25px;
-            font-size: 16px;
-            outline: none;
-        }
-        
-        .search-input:focus {
-            border-color: #7c3aed;
-        }
-        
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #7c3aed;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-        }
-        
-        /* 검색 결과 섹션 */
-        .search-results-section {
-            margin-bottom: 50px;
-        }
-        
-        .search-results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .results-count {
-            font-size: 18px;
-            color: #333;
-        }
-        
-        .search-query {
-            color: #7c3aed;
-            font-weight: bold;
-        }
-        
-        .clear-search {
-            background: none;
-            border: none;
-            color: #7c3aed;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            background: white;
-            border-radius: 12px;
-            color: #666;
-            font-size: 16px;
-        }
-        
-        /* 카테고리 섹션 */
-        .category-section {
-            margin-bottom: 50px;
-        }
-        
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .category-item {
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .category-item:hover {
-            transform: scale(1.05);
-        }
-        
-        .category-circle {
-            width: 120px;
-            height: 120px;
-            background: #7c3aed;
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .category-name {
-            font-size: 16px;
-            color: #333;
-        }
-        
-        /* 추천/결과 섹션 */
-        .recommendation-section {
-            margin-bottom: 50px;
-        }
-        
-        .section-title {
-            font-size: 22px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        
-        .facility-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .facility-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .facility-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
-        
-        .facility-image {
-            width: 100%;
-            height: 200px;
-            background: #ddd;
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .facility-info {
-            padding: 20px;
-        }
-        
-        .facility-badge {
-            display: inline-block;
-            background: #7c3aed;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-        
-        .facility-name {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #333;
-        }
-        
-        .facility-desc {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-        
-        .facility-details {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 15px;
-        }
-        
-        .facility-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .facility-link {
-            color: #7c3aed;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        
-        .facility-like {
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        
-        /* 필터 섹션 (요양원 탭용) */
-        .filter-section {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            display: none;
-        }
-        
-        .filter-section.active {
-            display: block;
-        }
-        
-        .filter-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .filter-label {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .filter-select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            outline: none;
-        }
-        
-        .content-section {
-            display: none;
-        }
-        
-        .content-section.active {
-            display: block;
-        }
-        
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .category-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-            
-            .facility-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-row {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #e9ecef; background: white; margin-bottom: 30px; }
+        .logo { display: flex; align-items: center; font-size: 24px; font-weight: bold; color: #7c3aed; }
+        .nav-buttons { display: flex; gap: 10px; }
+        .search-section { text-align: center; margin-bottom: 50px; }
+        .search-title { font-size: 24px; margin-bottom: 30px; color: #333; }
+        .search-box { position: relative; max-width: 600px; margin: 0 auto; }
+        .search-form { display: flex; align-items: center; }
+        .search-input { width: 100%; padding: 15px 50px 15px 20px; border: 2px solid #e9ecef; border-radius: 25px; font-size: 16px; outline: none; }
+        .search-input:focus { border-color: #7c3aed; }
+        .search-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #7c3aed; border: none; padding: 8px 12px; border-radius: 50%; color: white; cursor: pointer; }
+        .facility-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .facility-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; }
+        .facility-card:hover { transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        .facility-image { width: 100%; height: 200px; background: #ddd; background-size: cover; background-position: center; }
+        .facility-info { padding: 20px; }
+        .facility-badge { display: inline-block; background: #7c3aed; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin-bottom: 10px; }
+        .facility-name { font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #333; }
+        .facility-desc { font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.4; }
+        .facility-details { font-size: 13px; color: #888; margin-bottom: 15px; }
+        .facility-actions { display: flex; justify-content: space-between; align-items: center; }
+        .facility-link { color: #7c3aed; text-decoration: none; font-size: 14px; }
+        .facility-like { border: none; background: none; cursor: pointer; font-size: 18px; }
+        .no-results { text-align: center; padding: 40px; background: white; border-radius: 12px; color: #666; font-size: 16px; }
+        .search-results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .results-count { font-size: 18px; color: #333; }
+        .search-query { color: #7c3aed; font-weight: bold; }
+        .section-title { font-size: 22px; margin-bottom: 20px; color: #333; text-align: left; }
+        /* 카테고리 섹션 스타일 추가 */
+        .category-section { margin-bottom: 50px; }
+        .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 800px; margin: 0 auto; }
+        .category-item { text-align: center; cursor: pointer; transition: transform 0.3s; }
+        .category-item:hover { transform: scale(1.05); }
+        .category-circle { width: 120px; height: 120px; background: #7c3aed; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: bold; }
+        .category-name { font-size: 16px; color: #333; }
     </style>
 </head>
 <body>
-    <!-- 헤더 -->
     <div class="header">
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <div class="logo">🧭 돌봄 나침반</div>
+                <a href="{% url 'main' %}" style="text-decoration: none;"><div class="logo">🧭 돌봄 나침반</div></a>
                 <div class="nav-buttons">
-                    <!-- Django 템플릿 태그는 실제 환경에서 작동합니다 -->
                     {% if user.is_authenticated %}
                         <a href="{% url 'mypage' %}"><button>마이페이지</button></a>
                         <a href="{% url 'kakao_logout' %}"><button>로그아웃</button></a>
@@ -375,299 +63,91 @@
     </div>
     
     <div class="container">
-        <!-- 메인화면 -->
-        <div id="main-content" class="content-section active">
-            <!-- 검색 섹션 -->
-            <div class="search-section">
-                <h2 class="search-title">원하는 요양원을 알아볼까요?</h2>
-                <div class="search-box">
-                    <form method="GET" action="" class="search-form">
-                        <input type="text" name="q" class="search-input" 
-                               placeholder="시설명을 입력해주세요" 
-                               value="{{ search_query }}">
-                        <button type="submit" class="search-btn">🔍</button>
-                    </form>
-                </div>
+        <div class="search-section">
+            <h2 class="search-title">원하는 요양원을 알아볼까요?</h2>
+            <div class="search-box">
+                <form method="GET" action="{% url 'main' %}" class="search-form">
+                    <input type="text" name="q" class="search-input" 
+                           placeholder="시설명 또는 주소를 입력해주세요" 
+                           value="{{ search_query }}">
+                    <button type="submit" class="search-btn">🔍</button>
+                </form>
             </div>
-            
-            <!-- 검색 결과 섹션 (검색어가 있을 때만 표시) -->
-            <div id="search-results" class="search-results-section" style="display: none;">
+        </div>
+
+        {% comment %} 검색어가 있을 경우, 검색 결과 섹션을 표시합니다. {% endcomment %}
+        {% if search_query %}
+            <div class="search-results-section">
                 <div class="search-results-header">
                     <div class="results-count">
-                        '<span class="search-query"></span>'에 대한 검색 결과 <span id="results-count">0</span>개
+                        '<span class="search-query">{{ search_query }}</span>'에 대한 검색 결과 <span id="results-count">{{ results|length }}</span>개
                     </div>
-                    <button class="clear-search" onclick="clearSearch()">검색 초기화</button>
                 </div>
                 
-                <div id="results-container" class="facility-grid">
-                    <!-- 검색 결과가 여기에 동적으로 추가됩니다 -->
-                </div>
-                
-                <div id="no-results" class="no-results" style="display: none;">
-                    <p>검색 결과가 없습니다.</p>
-                    <p>다른 검색어로 시도해보세요.</p>
-                </div>
+                {% if results %}
+                    <div id="results-container" class="facility-grid">
+                        {% for facility in results %}
+                        <div class="facility-card">
+                            <div class="facility-image" style="background-image: url('...')"></div>
+                            <div class="facility-info">
+                                <span class="facility-badge">{{ facility.institution_type|default:'요양시설' }}</span>
+                                <div class="facility-name">{{ facility.facility_name }}</div>
+                                <div class="facility-desc">{{ facility.address|default:'주소 정보 없음' }}</div>
+                                <div class="facility-details">
+                                    전화: {{ facility.phone_number|default:'정보 없음' }}<br>
+                                    {% if facility.capacity %}정원: {{ facility.capacity }}{% endif %}
+                                </div>
+                                <div class="facility-actions">
+                                    <a href="{% url 'clickpage' facility_id=facility.facility_name %}" class="facility-link">시설정보</a>
+                                    <button class="facility-like">♡</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="no-results" class="no-results">
+                        <p>검색 결과가 없습니다.</p>
+                        <p>다른 검색어로 시도해보세요.</p>
+                    </div>
+                {% endif %}
             </div>
-            
-            <!-- 카테고리 섹션 (검색 결과가 없을 때만 표시) -->
-            <div id="category-section" class="category-section">
+        
+        {% comment %} 검색어가 없을 경우, 카테고리와 추천 시설 섹션을 표시합니다. {% endcomment %}
+        {% else %}
+            <div class="category-section">
                 <div class="category-grid">
-                    <div class="category-item" onclick="showNursingTab()">
-                        <div class="category-circle">요양원</div>
-                        <div class="category-name">요양원</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="category-circle">양로원</div>
-                        <div class="category-name">양로원</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="category-circle">사회복지시설</div>
-                        <div class="category-name">사회복지시설</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="category-circle">요양병원</div>
-                        <div class="category-name">요양병원</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="category-circle">종교시설</div>
-                        <div class="category-name">종교시설</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="category-circle">프리미엄</div>
-                        <div class="category-name">프리미엄</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="category-circle">셔틀운행</div>
-                        <div class="category-name">셔틀운행</div>
-                    </div>
-                    <div class="category-item">
-                        <div class="category-circle">도심인접</div>
-                        <div class="category-name">도심인접</div>
-                    </div>
+                    <div class="category-item"><div class="category-circle">요양원</div><div class="category-name">요양원</div></div>
+                    <div class="category-item"><div class="category-circle">양로원</div><div class="category-name">양로원</div></div>
+                    <div class="category-item"><div class="category-circle">사회복지시설</div><div class="category-name">사회복지시설</div></div>
+                    <div class="category-item"><div class="category-circle">요양병원</div><div class="category-name">요양병원</div></div>
                 </div>
             </div>
             
-            <!-- 추천 섹션 (검색 결과가 없을 때만 표시) -->
-            <div id="recommendation-section" class="recommendation-section">
+            <div class="recommendation-section">
                 <h3 class="section-title">돌봄 나침반 추천시설</h3>
-                <div class="facility-grid">
-                    <div class="facility-card">
-                        <div class="facility-image" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 200%22><rect width=%22300%22 height=%22200%22 fill=%22%23ddd%22/><text x=%22150%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22>시설 이미지</text></svg>')"></div>
-                        <div class="facility-info">
-                            <span class="facility-badge">시차나우 요양원</span>
-                            <div class="facility-name">시차나우 요양원</div>
-                            <div class="facility-desc">서울 광진 구로구에서 운영하는 치매전문</div>
-                            <div class="facility-actions">
-                                <a href="#" class="facility-link">시설정보</a>
-                                <button class="facility-like">♡</button>
+                {% if recommended_facilities %}
+                    <div class="facility-grid">
+                        {% for facility in recommended_facilities %}
+                        <div class="facility-card">
+                            <div class="facility-image" style="background-image: url('...')"></div>
+                            <div class="facility-info">
+                                <span class="facility-badge">{{ facility.institution_type|default:'요양시설' }}</span>
+                                <div class="facility-name">{{ facility.facility_name }}</div>
+                                <div class="facility-desc">{{ facility.address|default:'주소 정보 없음' }}</div>
+                                <div class="facility-actions">
+                                    <a href="#" class="facility-link">시설정보</a>
+                                    <button class="facility-like">♡</button>
+                                </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    
-                    <div class="facility-card">
-                        <div class="facility-image" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 200%22><rect width=%22300%22 height=%22200%22 fill=%22%23ddd%22/><text x=%22150%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22>시설 이미지</text></svg>')"></div>
-                        <div class="facility-info">
-                            <span class="facility-badge">평화요양원</span>
-                            <div class="facility-name">평화요양원</div>
-                            <div class="facility-desc">서울 광진 구로구에서 운영하는 치매전문</div>
-                            <div class="facility-actions">
-                                <a href="#" class="facility-link">시설정보</a>
-                                <button class="facility-like">♡</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="facility-card">
-                        <div class="facility-image" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 200%22><rect width=%22300%22 height=%22200%22 fill=%22%23ddd%22/><text x=%22150%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22>시설 이미지</text></svg>')"></div>
-                        <div class="facility-info">
-                            <span class="facility-badge">행복요양원</span>
-                            <div class="facility-name">행복요양원</div>
-                            <div class="facility-desc">서울 광진 구로구에서 운영하는 치매전문</div>
-                            <div class="facility-actions">
-                                <a href="#" class="facility-link">시설정보</a>
-                                <button class="facility-like">♡</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% else %}
+                    <p>추천할 시설이 없습니다.</p>
+                {% endif %}
             </div>
-        </div>
-        
-        <!-- 요양원 목록 화면 -->
-        <div id="nursing-content" class="content-section">
-            <!-- 뒤로가기 버튼 -->
-            <div style="margin-bottom: 20px;">
-                <button onclick="showMainContent()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #7c3aed;">← 메인으로</button>
-            </div>
-            
-            <!-- 검색 섹션 -->
-            <div class="search-section">
-                <div class="search-box">
-                    <form method="GET" action="" class="search-form">
-                        <input type="text" name="q" class="search-input" 
-                               placeholder="원하는 요양원을 알아볼까요?"
-                               value="{{ search_query }}">
-                        <button type="submit" class="search-btn">🔍</button>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- 필터 섹션 -->
-            <div class="filter-section active">
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label class="filter-label">시설유형</label>
-                        <select class="filter-select">
-                            <option>전체</option>
-                            <option>요양원</option>
-                            <option>주야간보호</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">지역</label>
-                        <select class="filter-select">
-                            <option>전체</option>
-                            <option>서울</option>
-                            <option>경기</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">가격</label>
-                        <select class="filter-select">
-                            <option>전체</option>
-                            <option>50만원 이하</option>
-                            <option>100만원 이하</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 요양원 목록 -->
-            <div class="facility-grid">
-                <div class="facility-card">
-                    <div class="facility-image" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 200%22><rect width=%22300%22 height=%22200%22 fill=%22%23ddd%22/><text x=%22150%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22>요양원 사진</text></svg>')"></div>
-                    <div class="facility-info">
-                        <span class="facility-badge">행복요양원</span>
-                        <div class="facility-name">행복요양원</div>
-                        <div class="facility-desc">Experienced dormitory helps elderly wonderfully, especially for open including.</div>
-                        <div class="facility-actions">
-                            <a href="#" class="facility-link">시설정보</a>
-                            <button class="facility-like">♡</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% endif %}
     </div>
-    
-    <script>
-        // Django 템플릿에서 전달받은 데이터
-        const searchQuery = '{{ search_query|escapejs }}';
-        const searchResults = {{ results|safe }};
-        const resultsCount = {{ results_count }};
-
-        // 페이지 로드 시 검색 결과 표시
-        document.addEventListener('DOMContentLoaded', function() {
-            // 검색어를 입력 필드에 설정
-            if (searchQuery) {
-                document.querySelectorAll('input[name="q"]').forEach(input => {
-                    input.value = searchQuery;
-                });
-                
-                // 검색 결과를 표시
-                showSearchResults(searchQuery);
-            }
-        });
-        
-        // 검색 결과 표시 함수
-        function showSearchResults(query) {
-            // 검색 결과 섹션을 표시하고 카테고리/추천 섹션을 숨김
-            document.getElementById('search-results').style.display = 'block';
-            document.getElementById('category-section').style.display = 'none';
-            document.getElementById('recommendation-section').style.display = 'none';
-            
-            // 검색어 표시
-            document.querySelector('.search-query').textContent = query;
-            
-            // Django에서 전달받은 결과 사용
-            displayResults(searchResults);
-        }
-        
-        // 검색 결과 화면에 표시
-        function displayResults(results) {
-            const resultsContainer = document.getElementById('results-container');
-            const noResultsDiv = document.getElementById('no-results');
-            const resultsCountSpan = document.getElementById('results-count');
-            
-            resultsCountSpan.textContent = results.length;
-            
-            if (results.length === 0) {
-                resultsContainer.style.display = 'none';
-                noResultsDiv.style.display = 'block';
-            } else {
-                resultsContainer.style.display = 'grid';
-                noResultsDiv.style.display = 'none';
-                
-                resultsContainer.innerHTML = results.map(facility => `
-                    <div class="facility-card">
-                        <div class="facility-image" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 200%22><rect width=%22300%22 height=%22200%22 fill=%22%23ddd%22/><text x=%22150%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22>시설 이미지</text></svg>')"></div>
-                        <div class="facility-info">
-                            <span class="facility-badge">${facility.기관유형 || '요양시설'}</span>
-                            <div class="facility-name">${facility.시설명}</div>
-                            <div class="facility-desc">${facility.주소 || '주소 정보 없음'}</div>
-                            <div class="facility-details">
-                                전화: ${facility.전화번호 || '정보 없음'}<br>
-                                ${facility.정원 ? `정원: ${facility.정원}명` : ''}
-                                ${facility.현원남 !== null && facility.현원여 !== null ? 
-                                    ` | 현원: ${(facility.현원남 || 0) + (facility.현원여 || 0)}명` : ''}
-                            </div>
-                            <div class="facility-actions">
-                                <a href="#" class="facility-link">시설정보</a>
-                                <button class="facility-like">♡</button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        // 검색 초기화 함수
-        function clearSearch() {
-            // URL에서 검색 파라미터 제거
-            const url = new URL(window.location);
-            url.searchParams.delete('q');
-            window.history.pushState({}, '', url);
-            
-            // 검색 입력 필드 초기화
-            document.querySelectorAll('input[name="q"]').forEach(input => {
-                input.value = '';
-            });
-            
-            // 원래 화면으로 복원
-            document.getElementById('search-results').style.display = 'none';
-            document.getElementById('category-section').style.display = 'block';
-            document.getElementById('recommendation-section').style.display = 'block';
-        }
-        
-        // 페이지 전환 함수
-        function showNursingTab() {
-            document.getElementById('main-content').classList.remove('active');
-            document.getElementById('nursing-content').classList.add('active');
-        }
-        
-        function showMainContent() {
-            document.getElementById('nursing-content').classList.remove('active');
-            document.getElementById('main-content').classList.add('active');
-        }
-        
-        // 카테고리 클릭 이벤트 (요양원 제외)
-        document.querySelectorAll('.category-item').forEach((item, index) => {
-            if (index !== 0) { // 첫 번째(요양원)는 제외
-                item.addEventListener('click', function() {
-                    alert('카테고리 선택: ' + this.querySelector('.category-name').textContent);
-                });
-            }
-        });
-    </script>
 </body>
 </html>

@@ -3,600 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아름다운인생프리미엄 - 돌봄 나침반</title>
+    <title>{{ facility.facility_name }} - 돌봄 나침반</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f8f9fa; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #e9ecef; background: white; margin-bottom: 30px; }
+        .logo { display: flex; align-items: center; font-size: 24px; font-weight: bold; color: #7c3aed; text-decoration: none; }
+        .nav-buttons { display: flex; gap: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.3s; text-decoration: none; display: inline-block; }
+        .btn-secondary { background: white; color: #7c3aed; border: 2px solid #7c3aed; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
+        .back-button { background: none; border: none; font-size: 16px; cursor: pointer; color: #7c3aed; margin-bottom: 20px; display: inline-block; }
+        .facility-detail { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+        .main-content, .sidebar { display: flex; flex-direction: column; gap: 30px; }
+        .card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card-title { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .facility-title { font-size: 28px; font-weight: bold; color: #333; margin-bottom: 8px; }
+        .facility-subtitle { font-size: 16px; color: #666; margin-bottom: 20px; }
+        .description { line-height: 1.7; color: #555; }
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px 25px; }
+        .info-item { display: flex; align-items: baseline; }
+        .info-label { font-weight: bold; color: #333; width: 140px; flex-shrink: 0; }
+        .info-value { color: #555; }
+        .info-value a { color: #7c3aed; text-decoration: none; }
+        .info-value a:hover { text-decoration: underline; }
+        .capacity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
+        .capacity-item { background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .capacity-label { font-size: 14px; color: #666; margin-bottom: 5px; }
+        .capacity-value { font-size: 20px; font-weight: bold; color: #7c3aed; }
         
-        body {
-            font-family: 'Malgun Gothic', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        /* 헤더 */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #e9ecef;
-            background: white;
-            margin-bottom: 30px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #7c3aed;
-        }
-        
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: #2c5aa0;
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #666;
-            border: 1px solid #ddd;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        /* 뒤로가기 버튼 */
-        .back-button {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #7c3aed;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .back-button:hover {
-            color: #5b21b6;
-        }
-        
-        /* 메인 컨텐츠 영역 */
-        .facility-detail {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-        }
-        
-        /* 이미지 갤러리 */
-        .image-gallery {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .main-image {
-            position: relative;
-            height: 400px;
-            overflow: hidden;
-        }
-        
-        .main-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .image-counter {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.9);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-        
-        .gallery-nav:hover {
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        
-        .gallery-nav.prev {
-            left: 20px;
-        }
-        
-        .gallery-nav.next {
-            right: 20px;
-        }
-        
-        /* 시설 정보 */
-        .facility-info {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .facility-title {
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        
-        .facility-subtitle {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        .consultation-btn {
-            background: #2c5aa0;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-        
-        .consultation-btn:hover {
-            background: #1e3a73;
-            transform: translateY(-2px);
-        }
-        
-        .description {
-            line-height: 1.6;
-            color: #555;
-            margin-bottom: 30px;
-        }
-        
-        /* 사이드바 */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .sidebar-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        
-        /* 요금표 */
-        .pricing-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        
-        .pricing-table th,
-        .pricing-table td {
-            padding: 12px 8px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .pricing-table th {
-            background: #f8f9fa;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .pricing-table td {
-            color: #666;
-        }
-        
-        .pricing-highlight {
-            background: #f0f4ff;
-            color: #2c5aa0;
-            font-weight: bold;
-        }
-        
-        .pricing-note {
-            font-size: 12px;
-            color: #888;
-            margin-top: 15px;
-            line-height: 1.4;
-        }
-        
-        .pricing-summary {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
-        
-        .pricing-total {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2c5aa0;
-            margin-bottom: 10px;
-        }
-        
-        .pricing-detail {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .capacity-info {
-            background: #f0f4ff;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c5aa0;
-        }
-        
-        /* 위치 정보 */
-        .location-info {
-            margin-bottom: 20px;
-        }
-        
-        .address {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        
-        .map-container {
-            width: 100%;
-            height: 250px;
-            background: #f0f0f0;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        .review-section {
-            margin-top: 20px;
-        }
-        
-        .review-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .review-placeholder {
-            text-align: center;
-            color: #999;
-            font-size: 14px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-        
-        /* 하트 아이콘 */
-        .heart-icon {
-            color: #ff6b6b;
-            font-size: 20px;
-            margin-left: 10px;
-        }
-        
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .facility-detail {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .sidebar {
-                order: -1;
-            }
-            
-            .main-image {
-                height: 250px;
-            }
-            
-            .facility-title {
-                font-size: 24px;
-            }
-            
-            .container {
-                padding: 10px;
-            }
-        }
+        @media (max-width: 992px) { .facility-detail { grid-template-columns: 1fr; } .sidebar { order: -1; } }
+        @media (max-width: 576px) { .info-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <!-- 헤더 -->
     <div class="header">
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <div class="logo">🧭 돌봄 나침반</div>
+                <a href="{% url 'main' %}" class="logo">🧭 돌봄 나침반</a>
                 <div class="nav-buttons">
-                    <button class="btn btn-secondary">회원가입</button>
-                    <button class="btn btn-secondary">로그인</button>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'mypage' %}" class="btn btn-secondary">마이페이지</a>
+                        <a href="{% url 'kakao_logout' %}" class="btn btn-secondary">로그아웃</a>
+                    {% else %}
+                        <a href="{% url 'kakao_login' %}" class="btn btn-secondary">카카오톡으로 로그인</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
     
     <div class="container">
-        <!-- 뒤로가기 버튼 -->
-        <button class="back-button" onclick="goBack()">
-            ← 뒤로가기
-        </button>
+        <a href="javascript:history.back()" class="back-button">← 뒤로가기</a>
         
         <div class="facility-detail">
-            <!-- 메인 컨텐츠 -->
             <div class="main-content">
-                <!-- 이미지 갤러리 -->
-                <div class="image-gallery">
-                    <div class="main-image">
-                        <img id="currentImage" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'><rect width='800' height='400' fill='%23f8f9fa'/><rect x='0' y='0' width='800' height='400' fill='url(%23luxuryGradient)'/><defs><linearGradient id='luxuryGradient'><stop offset='0%' stop-color='%23fff7ed'/><stop offset='100%' stop-color='%23fef3c7'/></linearGradient></defs><rect x='50' y='50' width='700' height='300' rx='10' fill='white' opacity='0.9'/><rect x='100' y='100' width='200' height='150' rx='8' fill='%23f59e0b' opacity='0.3'/><rect x='320' y='100' width='150' height='200' rx='8' fill='%23d97706' opacity='0.3'/><rect x='500' y='120' width='180' height='100' rx='8' fill='%2392400e' opacity='0.3'/><circle cx='200' cy='180' r='30' fill='%23fbbf24' opacity='0.4'/><circle cx='600' cy='180' r='25' fill='%23f59e0b' opacity='0.4'/><text x='400' y='330' text-anchor='middle' font-family='Arial' font-size='18' fill='%2392400e'>프리미엄 요양원 로비</text></svg>" alt="시설 이미지">
-                        <div class="image-counter">
-                            <span id="imageCounter">2 / 10</span>
+                <div class="card">
+                    <p class="facility-subtitle">{{ facility.institution_type|default:"정보 없음" }}</p>
+                    <h1 class="facility-title">{{ facility.facility_name }}</h1>
+                    <div class="info-grid" style="grid-template-columns: 1fr; margin-top: 20px;">
+                        <div class="info-item">
+                            <span class="info-label">📞 전화번호</span>
+                            <span class="info-value">{{ facility.phone_number|default:"-" }}</span>
                         </div>
-                        <button class="gallery-nav prev" onclick="previousImage()">‹</button>
-                        <button class="gallery-nav next" onclick="nextImage()">›</button>
+                        <div class="info-item">
+                            <span class="info-label">🏠 홈페이지</span>
+                            <span class="info-value">
+                                {% if facility.homepage and facility.homepage != '-' %}
+                                    <a href="{{ facility.homepage }}" target="_blank">{{ facility.homepage }}</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">📍 주소</span>
+                            <span class="info-value">{{ facility.address|default:"-" }}</span>
+                        </div>
+                         <div class="info-item">
+                            <span class="info-label">📅 지정일</span>
+                            <span class="info-value">{{ facility.designation_date|default:"-" }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">🚗 주차시설</span>
+                            <span class="info-value">{{ facility.parking_facility|default:"-" }}</span>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- 시설 정보 -->
-                <div class="facility-info">
-                    <h1 class="facility-title">
-                        아름다운인생프리미엄
-                        <span class="heart-icon">♡ 1</span>
-                    </h1>
-                    <p class="facility-subtitle">전철역에서 4분 거리 대형 산책로를 갖춘 프리미엄 요양원</p>
-                    
-                    <button class="consultation-btn">바로 상담하기</button>
-                    
-                    <div class="description">
-                        <p><strong>'원하는 시설을 직접 고르실 수 있다고요?'</strong></p>
-                        <br>
-                        <p>넓은 산책로와 품격있는 생활공간을 갖춘 프리미엄요양원! 고급스럽고 아름다운 시설뿐만 아니라 어르신들께 맞춤형으로 제공되는 풍성한 케어, 각각의 자율적인 삶을 최대한 존중해드리는 따뜻한 분위기를 지향하고 있습니다.</p>
-                        <br>
-                        <p>요양원에서 직접 조리하는 식사는 어르신들께서 어차원시설 메뉴를 직접 고르실 수 있도록 정교 스펙트럼이 넓은 메이커 아름 한 마음같이 상업한 특색있는 요양원입니다.</p>
-                        <br>
-                        <p>대표님께서는 요양 시설을 7년 이상 운영한 경력이 있는 베테랑이시기 때문에 보호자들이 더욱 안심할 수 있는 아름다운인생프리미엄 요양원입니다.</p>
-                    </div>
-                </div>
-                
-                <!-- 위치 정보 -->
-                <div class="sidebar-card">
-                    <h3 class="card-title">위치</h3>
-                    <div class="location-info">
-                        <div class="address">
-                            <span style="color: #2c5aa0;">📍</span>
-                            <span>인천 동구 대곡로 397-3 (대곡동) 인천 요양원</span>
-                        </div>
-                           <div style="text-align: center; margin: 6px 0 8px;">🗺️</div>
+                {% comment %} templates/facility_detail.html 수정 {% endcomment %}
 
-    <!-- 지도 컨테이너: 카드 폭에 맞춰 비율 유지 -->
-    <div class="map-container"
-         style="width:100%; aspect-ratio: 4 / 3; border-radius:10px; overflow:hidden;">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d3268.148540567816!2d126.64349780348195!3d37.47501417069326!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1z7J247LKcIOuPmeq1rCDsmpTslpHsm5A!5e0!3m2!1sko!2skr!4v1754964286502!5m2!1sko!2skr"
-        style="width:100%; height:100%; border:0; display:block;"
-        allowfullscreen
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
+<div class="card">
+    <h3 class="card-title">위치</h3>
+    <div class="location-info">
+        <div class="address" style="display: flex; align-items: flex-start; gap: 10px; font-size: 16px; margin-bottom: 20px;">
+            <span style="color: #2c5aa0;">📍</span>
+            <span>{{ facility.address|default:"주소 정보 없음" }}</span>
+        </div>
+
+        {% comment %} --- 지도 표시 영역 수정 --- {% endcomment %}
+        {% if map_url %}
+            <div class="map-container" style="width:100%; height:300px; border-radius:10px; overflow:hidden; border: 1px solid #eee;">
+                <iframe
+                    src="{{ map_url }}"
+                    width="100%"
+                    height="100%"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        {% else %}
+            <div class="map-container" style="width:100%; height:200px; border-radius:10px; background-color: #f0f0f0; display:flex; align-items:center; justify-content:center; color:#888;">
+                주소 정보가 없어 지도를 표시할 수 없습니다.
+            </div>
+        {% endif %}
     </div>
-  </div>
-                        </div>
+</div>
+
+                <div class="card">
+                    <h3 class="card-title">교통편 정보</h3>
+                    <div class="description">
+                        <p>{{ facility.transportation|default:"교통편 정보가 없습니다."|linebreaksbr }}</p>
                     </div>
-                    
-                    <div class="review-section">
-                        <h4 class="card-title">이용후기</h4>
-                        <div class="review-header">
-                            <span style="font-size: 14px; color: #666;">💬 이웃의 시설 사용후기</span>
-                        </div>
-                        <div class="review-placeholder">
-                            아직 등록된 후기가 없습니다.<br>
-                            첫 번째 후기를 남겨보세요!
-                        </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">직원 현황</h3>
+                    <div class="info-grid">
+                        {% if facility.head_of_facility and facility.head_of_facility != '0' %}<div class="info-item"><span class="info-label">시설장</span><span class="info-value">{{ facility.head_of_facility }}</span></div>{% endif %}
+                        {% if facility.general_manager and facility.general_manager != '0' %}<div class="info-item"><span class="info-label">사무국장</span><span class="info-value">{{ facility.general_manager }}</span></div>{% endif %}
+                        {% if facility.social_worker and facility.social_worker != '0' %}<div class="info-item"><span class="info-label">사회복지사</span><span class="info-value">{{ facility.social_worker }}</span></div>{% endif %}
+                        {% if facility.nurse and facility.nurse != '0' %}<div class="info-item"><span class="info-label">간호사</span><span class="info-value">{{ facility.nurse }}</span></div>{% endif %}
+                        {% if facility.nursing_assistant and facility.nursing_assistant != '0' %}<div class="info-item"><span class="info-label">간호조무사</span><span class="info-value">{{ facility.nursing_assistant }}</span></div>{% endif %}
+                        {% if facility.physical_therapist and facility.physical_therapist != '0' %}<div class="info-item"><span class="info-label">물리치료사</span><span class="info-value">{{ facility.physical_therapist }}</span></div>{% endif %}
+                        {% if facility.occupational_therapist and facility.occupational_therapist != '0' %}<div class="info-item"><span class="info-label">작업치료사</span><span class="info-value">{{ facility.occupational_therapist }}</span></div>{% endif %}
+                        {% if facility.nutritionist and facility.nutritionist != '0' %}<div class="info-item"><span class="info-label">영양사</span><span class="info-value">{{ facility.nutritionist }}</span></div>{% endif %}
+                        {% if facility.cook and facility.cook != '0' %}<div class="info-item"><span class="info-label">조리원</span><span class="info-value">{{ facility.cook }}</span></div>{% endif %}
+                        {% if facility.sanitation_worker and facility.sanitation_worker != '0' %}<div class="info-item"><span class="info-label">위생원</span><span class="info-value">{{ facility.sanitation_worker }}</span></div>{% endif %}
+                        {% if facility.office_worker and facility.office_worker != '0' %}<div class="info-item"><span class="info-label">사무원</span><span class="info-value">{{ facility.office_worker }}</span></div>{% endif %}
+                        {% if facility.manager and facility.manager != '0' %}<div class="info-item"><span class="info-label">관리인</span><span class="info-value">{{ facility.manager }}</span></div>{% endif %}
+                        {% if facility.assistant and facility.assistant != '0' %}<div class="info-item"><span class="info-label">보조원</span><span class="info-value">{{ facility.assistant }}</span></div>{% endif %}
+                        {% if facility.contract and facility.contract != '0' %}<div class="info-item"><span class="info-label">계약의사</span><span class="info-value">{{ facility.contract }}</span></div>{% endif %}
+                        {% if facility.suspended and facility.suspended != '0' %}<div class="info-item"><span class="info-label">유예인력</span><span class="info-value">{{ facility.suspended }}</span></div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">요양보호사 현황</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">재가노인-1급</span><span class="info-value">{{ facility.caregiver_type1|default:'0' }}</span></div>
+                        <div class="info-item"><span class="info-label">재가노인-2급</span><span class="info-value">{{ facility.caregiver_type2|default:'0' }}</span></div>
+                        <div class="info-item"><span class="info-label">재가노인-유예</span><span class="info-value">{{ facility.caregiver_suspended|default:'0' }}</span></div>
+                        <div class="info-item"><span class="info-label">재가장기-1급</span><span class="info-value">{{ facility.longterm_caregiver_type1|default:'0' }}</span></div>
+                        <div class="info-item"><span class="info-label">재가장기-2급</span><span class="info-value">{{ facility.longterm_caregiver_type2|default:'0' }}</span></div>
+                        <div class="info-item"><span class="info-label">재가장기-유예</span><span class="info-value">{{ facility.longterm_caregiver_suspended|default:'0' }}</span></div>
                     </div>
                 </div>
             </div>
             
-            <!-- 사이드바 -->
             <div class="sidebar">
-                <!-- 시설이용요금 -->
-                <div class="sidebar-card">
-                    <h3 class="card-title">시설이용요금</h3>
-                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
-                        요양원 입소비는 본인부담금+식비와 간식비+상급병실비(선택)+아·미용비 입니다.
-                    </p>
-                    
-                    <table class="pricing-table">
-                        <thead>
-                            <tr>
-                                <th>등급</th>
-                                <th>1일수가</th>
-                                <th>급여비용<br>합계</th>
-                                <th>본인부담률</th>
-                                <th>본인부담금</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1등급</td>
-                                <td>90,450</td>
-                                <td>2,713,500</td>
-                                <td>20%</td>
-                                <td>542,700</td>
-                            </tr>
-                            <tr>
-                                <td>2등급</td>
-                                <td>83,910</td>
-                                <td>2,517,300</td>
-                                <td>20%</td>
-                                <td>503,460</td>
-                            </tr>
-                            <tr class="pricing-highlight">
-                                <td>3-5등급</td>
-                                <td>79,240</td>
-                                <td>2,377,200</td>
-                                <td>20%</td>
-                                <td>475,440</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <div class="pricing-note">
-                        · 본인부담금은 건강보험 공단이 정해놓은 수가(일일 비용)의 20% 이며, 2025년도 공단 수가는 위와 같습니다.<br>
-                        · 이는 국가가 정해놓은 금액이며, 전국 공통입니다.
+                <div class="card">
+                    <h3 class="card-title">정원 및 현황</h3>
+                    <div class="capacity-item" style="margin-bottom: 20px;">
+                        <div class="capacity-label">전체 정원</div>
+                        <div class="capacity-value">{{ facility.capacity|default:'-' }}명</div>
                     </div>
-                    
-                    <div class="pricing-summary">
-                        <div style="background: #e5e7eb; padding: 8px; border-radius: 4px; margin-bottom: 10px; text-align: center; font-size: 12px;">
-                            3-5등급 본인부담금 20% 기준
+                    <div class="capacity-grid">
+                        <div class="capacity-item">
+                            <div class="capacity-label">현재 인원</div>
+                            <div class="capacity-value">남 {{ facility.current_male|default:'0' }} / 여 {{ facility.current_female|default:'0' }}</div>
                         </div>
-                        
-                        <div style="text-decoration: line-through; color: #999; font-size: 14px; margin-bottom: 5px;">
-                            월 2,377,200원
-                        </div>
-                        
-                        <div class="pricing-total">
-                            기본금액 (475,440원) + 식비 (387,000원) + 간식비 (60,000원) = 922,440원
-                        </div>
-                        
-                        <div class="pricing-detail">
-                            식비는 일일 아침, 점심, 저녁 합한 기준(30일)이며 간식비는 합한 기준(30일) 기준입니다 .
+                        <div class="capacity-item">
+                            <div class="capacity-label">대기 인원</div>
+                            <div class="capacity-value">남 {{ facility.waiting_male|default:'0' }} / 여 {{ facility.waiting_female|default:'0' }}</div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- 허가인원 -->
-                <div class="sidebar-card">
-                    <h3 class="card-title">허가인원</h3>
-                    <div class="capacity-info">99명</div>
+
+                <div class="card">
+                    <h3 class="card-title">시설 내부 정보</h3>
+                    <div class="info-grid" style="grid-template-columns: 1fr;">
+                        <div class="info-item"><span class="info-label">사무실</span><span class="info-value">{{ facility.office|default:'-' }}</span></div>
+                        <div class="info-item"><span class="info-label">침실</span><span class="info-value">{{ facility.bedroom|default:'-' }}</span></div>
+                        <div class="info-item"><span class="info-label">화장실</span><span class="info-value">{{ facility.toilet|default:'-' }}</span></div>
+                        <div class="info-item"><span class="info-label">세면/세탁실</span><span class="info-value">{{ facility.washing_room|default:'-' }}</span></div>
+                        <div class="info-item"><span class="info-label">주야간보호</span><span class="info-value">{{ facility.day_night_care|default:'-' }}</span></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        // 이미지 갤러리 기능
-        const images = [
-            "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'><rect width='800' height='400' fill='%23f8f9fa'/><rect x='0' y='0' width='800' height='400' fill='url(%23luxuryGradient)'/><defs><linearGradient id='luxuryGradient'><stop offset='0%' stop-color='%23fff7ed'/><stop offset='100%' stop-color='%23fef3c7'/></linearGradient></defs><rect x='50' y='50' width='700' height='300' rx='10' fill='white' opacity='0.9'/><rect x='100' y='100' width='200' height='150' rx='8' fill='%23f59e0b' opacity='0.3'/><rect x='320' y='100' width='150' height='200' rx='8' fill='%23d97706' opacity='0.3'/><rect x='500' y='120' width='180' height='100' rx='8' fill='%2392400e' opacity='0.3'/><circle cx='200' cy='180' r='30' fill='%23fbbf24' opacity='0.4'/><circle cx='600' cy='180' r='25' fill='%23f59e0b' opacity='0.4'/><text x='400' y='330' text-anchor='middle' font-family='Arial' font-size='18' fill='%2392400e'>프리미엄 요양원 로비</text></svg>",
-            "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'><rect width='800' height='400' fill='%23f0f9ff'/><rect x='50' y='80' width='700' height='240' rx='15' fill='%23dbeafe'/><rect x='100' y='120' width='150' height='80' rx='5' fill='%233b82f6' opacity='0.3'/><rect x='280' y='120' width='150' height='80' rx='5' fill='%232563eb' opacity='0.3'/><rect x='460' y='120' width='150' height='80' rx='5' fill='%231d4ed8' opacity='0.3'/><rect x='100' y='220' width='150' height='80' rx='5' fill='%23f97316' opacity='0.3'/><rect x='280' y='220' width='150' height='80' rx='5' fill='%23ea580c' opacity='0.3'/><rect x='460' y='220' width='150' height='80' rx='5' fill='%23dc2626' opacity='0.3'/><text x='400' y='360' text-anchor='middle' font-family='Arial' font-size='16' fill='%23374151'>식당 및 공용공간</text></svg>",
-            "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'><rect width='800' height='400' fill='%23f0fdf4'/><rect x='100' y='100' width='600' height='200' rx='10' fill='%23bbf7d0'/><rect x='150' y='150' width='100' height='60' rx='5' fill='%2316a34a' opacity='0.4'/><rect x='300' y='130' width='80' height='80' rx='5' fill='%23059669' opacity='0.4'/><rect x='450' y='160' width='120' height='50' rx='5' fill='%23047857' opacity='0.4'/><circle cx='200' cy='180' r='20' fill='%2322c55e' opacity='0.5'/><circle cx='350' cy='170' r='15' fill='%2316a34a' opacity='0.5'/><circle cx='500' cy='185' r='25' fill='%23059669' opacity='0.5'/><text x='400' y='330' text-anchor='middle' font-family='Arial' font-size='16' fill='%23166534'>개인실 침실</text></svg>"
-        ];
-        
-        let currentImageIndex = 1; // 2번째 이미지부터 시작 (2/10 표시)
-        const totalImages = 10;
-        
-        function updateImageCounter() {
-            document.getElementById('imageCounter').textContent = `${currentImageIndex + 1} / ${totalImages}`;
-        }
-        
-        function previousImage() {
-            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-            document.getElementById('currentImage').src = images[currentImageIndex];
-            updateImageCounter();
-        }
-        
-        function nextImage() {
-            currentImageIndex = (currentImageIndex + 1) % images.length;
-            document.getElementById('currentImage').src = images[currentImageIndex];
-            updateImageCounter();
-        }
-        
-        // 뒤로가기 함수
-        function goBack() {
-            // 실제 구현에서는 history.back() 또는 특정 페이지로 리다이렉트
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                // 메인 페이지로 이동하는 로직
-                alert('메인 페이지로 이동합니다.');
-            }
-        }
-        
-        // 상담하기 버튼 클릭 이벤트
-        document.querySelector('.consultation-btn').addEventListener('click', function() {
-            alert('상담 신청이 접수되었습니다. 곧 연락드리겠습니다.');
-        });
-        
-        // 하트 아이콘 클릭 이벤트
-        document.querySelector('.heart-icon').addEventListener('click', function() {
-            if (this.textContent.includes('♡')) {
-                this.innerHTML = '❤️ 2';
-                this.style.color = '#ff6b6b';
-            } else {
-                this.innerHTML = '♡ 1';
-                this.style.color = '#ff6b6b';
-            }
-        });
-    </script>
 </body>
 </html>

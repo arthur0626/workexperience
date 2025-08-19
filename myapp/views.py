@@ -1,7 +1,10 @@
 import os
+from shlex import quote
+from elasticsearch import NotFoundError
 import requests
 import pandas as pd
-import json
+from elasticsearch_dsl import Q
+from .documents import SilverCareFacilityDocument
 from .forms import ProtectedProfileForm, SelfProfileForm
 from .models import ProtectedProfile, SelfProfile
 from django.shortcuts import render, redirect
@@ -85,92 +88,6 @@ def kakao_unlink(request):
 
     return redirect('main')
 
-def main(request):
-    """
-    CSV 파일을 읽어와 시설명을 검색하고 결과를 템플릿에 전달하는 뷰.
-    """
-    # GET 요청에서 'q'라는 이름의 쿼리 파라미터(검색어)를 가져옵니다.
-    search_query = request.GET.get('q', '').strip()
-    context = {
-        'search_query': search_query,
-        'results': [],
-        'results_count': 0
-    }
-
-    # CSV 파일의 절대 경로를 구성합니다.
-    csv_file_path = os.path.join(settings.BASE_DIR, 'myapp', 'static', 'csv', 'output_combined_final.csv')
-
-    # 검색 쿼리가 있을 경우에만 검색을 수행합니다.
-    if search_query:
-        try:
-            # pandas 라이브러리를 사용하여 CSV 파일을 DataFrame으로 읽습니다.
-            df = pd.read_csv(csv_file_path, encoding='utf-8')
-
-            # '시설명' 컬럼에서 검색어를 포함하는 행을 찾습니다.
-            search_results = df[df['시설명'].str.contains(search_query, na=False, case=False)]
-
-            # 결과를 딕셔너리 리스트로 변환
-            results = search_results.to_dict('records')
-            
-            # NaN 값을 None으로 변환 (JSON 직렬화를 위해)
-            for result in results:
-                for key, value in result.items():
-                    if pd.isna(value):
-                        result[key] = None
-            
-            context['results'] = results
-            context['results_count'] = len(results)
-
-        except FileNotFoundError:
-            context['error'] = f"CSV 파일을 찾을 수 없습니다: {csv_file_path}"
-        except Exception as e:
-            context['error'] = f"파일 처리 중 오류가 발생했습니다: {str(e)}"
-
-    return render(request, 'main.html', context)
-
-def search_facilities_ajax(request):
-    """
-    AJAX 요청을 위한 검색 API
-    """
-    if request.method == 'GET':
-        search_query = request.GET.get('q', '').strip()
-        
-        if not search_query:
-            return JsonResponse({
-                'results': [],
-                'results_count': 0,
-                'search_query': search_query
-            })
-
-        csv_file_path = os.path.join(settings.BASE_DIR, 'myapp', 'static', 'csv', 'output_combined_final.csv')
-
-        try:
-            df = pd.read_csv(csv_file_path, encoding='utf-8')
-            search_results = df[df['시설명'].str.contains(search_query, na=False, case=False)]
-            results = search_results.to_dict('records')
-            
-            # NaN 값을 None으로 변환
-            for result in results:
-                for key, value in result.items():
-                    if pd.isna(value):
-                        result[key] = None
-            
-            return JsonResponse({
-                'results': results,
-                'results_count': len(results),
-                'search_query': search_query
-            })
-
-        except Exception as e:
-            return JsonResponse({
-                'error': f"검색 중 오류가 발생했습니다: {str(e)}",
-                'results': [],
-                'results_count': 0,
-                'search_query': search_query
-            }, status=500)
-
-    return JsonResponse({'error': 'GET 요청만 지원됩니다.'}, status=405)
-
 @login_required
 def mypage(request):
     self_profile = SelfProfile.objects.get(user=request.user)
@@ -180,21 +97,6 @@ def mypage(request):
         'self_profile': self_profile,
         'protected_profiles': protected_profiles
     })
-
-@login_required
-def recent(request):
-    recent_homes = []  # 실제 로직으로 변경 필요
-    return render(request, 'recent.html', {'recent_homes': recent_homes})
-
-@login_required
-def scrapped(request):
-    scrapped_homes = []  # 실제 로직으로 변경 필요
-    return render(request, 'scrapped.html', {'scrapped_homes': scrapped_homes})
-
-@login_required
-def reviews(request):
-    user_reviews = []  # 실제 로직으로 변경 필요
-    return render(request, 'reviews.html', {'user_reviews': user_reviews})
 
 @login_required
 def add_profile(request):
@@ -263,12 +165,51 @@ def survey(request):
     })
 
 
-@login_required
-def mypage2(request):
-    self_profile = SelfProfile.objects.get(user=request.user)
-    protected_profiles = ProtectedProfile.objects.filter(user=request.user)
+def clickpage(request, facility_id):
+    try:
+        facility_doc = SilverCareFacilityDocument.get(id=facility_id)
+        facility_data = facility_doc.to_dict()
 
-    return render(request, 'mypage2.html', {
-        'self_profile': self_profile,
-        'protected_profiles': protected_profiles
-    }) 
+        # --- 지도 URL 생성 로직 추가 ---
+        address = facility_data.get('address')
+        if address:
+            # 주소를 URL 인코딩하여 Google Maps Embed URL 생성
+            encoded_address = quote(address)
+            map_url = f"https://www.google.com/maps?q={encoded_address}&output=embed"
+        else:
+            map_url = "" # 주소 정보가 없을 경우 빈 URL 전달
+
+        context = {
+            'facility': facility_data,
+            'map_url': map_url, # 생성된 지도 URL을 context에 추가
+        }
+        return render(request, 'clickpage.html', context)
+        
+    except NotFoundError:
+        raise Http404("해당 시설을 찾을 수 없습니다.")
+
+def main(request):
+    # URL의 GET 파라미터에서 검색어('q')를 가져옵니다.
+    search_query = request.GET.get('q', '')
+    
+    results_list = []
+
+    if search_query:
+        # Elasticsearch 'multi_match' 쿼리를 사용하여 facility_name과 address 필드에서 검색
+        q = Q('multi_match', 
+            query=search_query, 
+            fields=['facility_name' ], 
+            analyzer='nori'
+        )
+        search = SilverCareFacilityDocument.search().query(q)
+        
+        response = search.execute()
+        results_list = [hit.to_dict() for hit in response.hits]
+    
+    # 검색어와 결과 리스트를 템플릿에 전달합니다.
+    context = {
+        'search_query': search_query,
+        'results': results_list,
+    }
+    
+    return render(request, 'main.html', context)
