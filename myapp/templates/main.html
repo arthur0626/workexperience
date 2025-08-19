@@ -6,6 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>돌봄 나침반</title>
     <style>
+        .ai-search-btn { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; transition: all 0.3s; }
+        .ai-search-btn:hover { box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4); transform: translateY(-3px); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%; text-align: left; }
+        .modal-title { font-size: 22px; margin-bottom: 20px; }
+        .profile-list { list-style: none; max-height: 300px; overflow-y: auto; }
+        .profile-list li { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s; }
+        .profile-list li:hover { background-color: #f8f9fa; }
+        .profile-list li:last-child { border-bottom: none; }
+        .modal-close { float: right; font-size: 24px; cursor: pointer; }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Malgun Gothic', sans-serif; background-color: #f8f9fa; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
@@ -74,6 +86,35 @@
                 </form>
             </div>
         </div>
+
+        
+<div class="search-box" style="margin-bottom: 20px;">
+    </div>
+<div style="text-align: center; margin-bottom: 50px;">
+    <button id="aiSearchBtn" class="ai-search-btn">🤖 AI 맞춤 추천받기</button>
+</div>
+
+<div id="profileModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h3 class="modal-title">어떤 프로필로 추천받을까요?</h3>
+        <ul class="profile-list">
+            {% if protected_profiles %}
+                {% for profile in protected_profiles %}
+                    <li onclick="startAiSearch({{ profile.id }})">
+                        <strong>{{ profile.name }}</strong> ({{ profile.age }}세, {{ profile.get_sex_display }})
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>
+                    <p>먼저 프로필을 등록해주세요.</p>
+                    <a href="{% url 'add_profile' %}">프로필 등록하러 가기</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
 
         {% comment %} 검색어가 있을 경우, 검색 결과 섹션을 표시합니다. {% endcomment %}
         {% if search_query %}
@@ -150,4 +191,36 @@
         {% endif %}
     </div>
 </body>
+
+
+<script>
+    const aiSearchBtn = document.getElementById('aiSearchBtn');
+    const profileModal = document.getElementById('profileModal');
+
+    aiSearchBtn.addEventListener('click', () => {
+        {% if user.is_authenticated %}
+            profileModal.style.display = 'flex';
+        {% else %}
+            alert('AI 맞춤 추천을 받으려면 로그인이 필요합니다.');
+            window.location.href = "{% url 'kakao_login' %}";
+        {% endif %}
+    });
+
+    function closeModal() {
+        profileModal.style.display = 'none';
+    }
+
+    function startAiSearch(profileId) {
+        // 로딩 메시지 등을 추가하면 더 좋습니다.
+        console.log(`AI 추천 시작 (프로필 ID: ${profileId})`);
+        window.location.href = `/ai_search/${profileId}/`;
+    }
+
+    window.onclick = function(event) {
+        if (event.target == profileModal) {
+            closeModal();
+        }
+    }
+</script>
 </html>
+

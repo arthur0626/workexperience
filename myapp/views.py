@@ -1,7 +1,6 @@
-import os
+import os, json, replicate, requests
 from shlex import quote
 from elasticsearch import NotFoundError
-import requests
 import pandas as pd
 from elasticsearch_dsl import Q
 from .documents import SilverCareFacilityDocument
@@ -212,4 +211,106 @@ def main(request):
         'results': results_list,
     }
     
+    if request.user.is_authenticated:
+        context['protected_profiles'] = ProtectedProfile.objects.filter(user=request.user)
+    else:
+        context['protected_profiles'] = []
+
     return render(request, 'main.html', context)
+
+
+def ai_search(request, profile_id):
+    try:
+        profile = ProtectedProfile.objects.get(id=profile_id, user=request.user)
+    except ProtectedProfile.DoesNotExist:
+        raise Http404("프로필을 찾을 수 없습니다.")
+
+    # 1. Elasticsearch에서 모든 시설 데이터 가져오기 (최대 100개로 제한)
+    search = SilverCareFacilityDocument.search()[:100]
+    response = search.execute()
+    facilities = [hit.to_dict() for hit in response.hits]
+
+    # 2. AI에게 전달할 프롬프트 생성
+    prompt = f"""
+    당신은 대한민국 최고의 노인 요양 시설 추천 전문가입니다. 아래의 '보호 대상자 프로필'과 '시설 목록'을 분석하여, 프로필에 가장 적합한 시설 3곳을 추천해주세요.
+
+    [보호 대상자 프로필]
+    - 이름: {profile.name}
+    - 나이: {profile.age}
+    - 성별: {profile.get_sex_display}
+    - 선호 지역: {profile.address} {profile.address_detail}
+    - 예산 범위(월): {profile.budget_min}만원 ~ {profile.budget_max}만원
+    - 건강 상태: {profile.health_conditions}
+    - 희망 서비스: {profile.preferred_services}
+    - 기타 사항: {profile.additional_info}
+
+    [시설 목록]
+    {json.dumps(facilities, ensure_ascii=False, indent=2)}
+
+    [요청 사항]
+    1. '시설 목록'에서 '보호 대상자 프로필'에 가장 적합한 시설 3곳을 선정해주세요.
+    2. 각 시설에 대해 다음 기준을 종합적으로 고려하여 평가해주세요:
+       - **적합성**: 건강 상태 및 희망 서비스 충족 여부 (예: 거동이 불편하면 물리치료사, 재활 프로그램이 중요)
+       - **근접성**: 선호 지역과의 거리
+       - **평판 및 환경**: 인터넷 검색을 통해 알 수 있는 평판이나 주변 시설(큰 병원, 교회, 공원 등)을 고려해주세요.
+       - **예산**: 예산 범위 내에 있는지 (정확한 비용 정보가 없으면 추정)
+    3. 결과를 반드시 아래와 같은 JSON 형식으로만 응답해주세요. 다른 설명은 추가하지 마세요.
+
+    [
+        {{
+            "facility_name": "추천 시설 이름 1",
+            "reason": "이 시설을 추천하는 이유를 2~3문장으로 구체적으로 설명해주세요."
+        }},
+        {{
+            "facility_name": "추천 시설 이름 2",
+            "reason": "두 번째 시설을 추천하는 이유를 설명해주세요."
+        }},
+        {{
+            "facility_name": "추천 시설 이름 3",
+            "reason": "세 번째 시설을 추천하는 이유를 설명해주세요."
+        }}
+    ]
+    """
+
+    # 3. Replicate API 호출
+    try:
+        os.environ["REPLICATE_API_TOKEN"] = settings.REPLICATE_API_TOKEN
+        output = replicate.run(
+            "meta/meta-llama-3-8b-instruct",
+            input={"prompt": prompt, "temperature": 0.5, "max_new_tokens": 1024}
+        )
+        ai_response_str = "".join(output)
+
+        # 4. AI 응답 파싱
+        # AI 응답에서 JSON 부분만 정확히 추출
+        json_start = ai_response_str.find('[')
+        json_end = ai_response_str.rfind(']') + 1
+        recommendations_json = ai_response_str[json_start:json_end]
+
+        recommendations = json.loads(recommendations_json)
+
+        # 추천된 시설 이름 목록 추출
+        recommended_names = [rec['facility_name'] for rec in recommendations]
+
+        # 전체 시설 목록에서 추천된 시설 정보만 필터링
+        recommended_facilities = []
+        for rec in recommendations:
+            for facility in facilities:
+                if facility.get('facility_name') == rec['facility_name']:
+                    # AI의 추천 이유를 시설 정보에 추가
+                    facility['ai_reason'] = rec['reason']
+                    recommended_facilities.append(facility)
+                    break
+
+    except Exception as e:
+        # AI 호출 실패 시 에러 처리
+        print(f"AI API Error: {e}")
+        recommendations = []
+        recommended_facilities = []
+
+    context = {
+        'profile': profile,
+        'recommended_facilities': recommended_facilities,
+    }
+
+    return render(request, 'ai_search.html', context)

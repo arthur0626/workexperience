@@ -36,6 +36,8 @@ LOGIN_URL = 'http://localhost:8000/kakao_login/'
 LOGIN_REDIRECT_URI = "http://localhost:8000/kakao_login/"
 LOGOUT_REDIRECT_URI = "http://localhost:8000/"
 
+# Replicate API 설정
+REPLICATE_API_TOKEN = "r8_YCX71LtKITmBE5PYeQ2aFBMIyGTd2z63x6Uky"
 
 # Application definition
 

@@ -1,0 +1,71 @@
+{% comment %} templates/ai_results.html (새 파일) {% endcomment %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 맞춤 추천 결과 - 돌봄 나침반</title>
+    <style>
+        /* ... search.html의 모든 스타일 코드를 여기에 붙여넣기 ... */
+        .ai-reason-card { margin-top: 15px; background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #7c3aed; }
+        .ai-reason-title { font-weight: bold; color: #7c3aed; margin-bottom: 8px; }
+        .ai-reason-text { color: #555; line-height: 1.6; }
+        .page-subtitle { font-size: 18px; color: #666; text-align: center; margin-bottom: 40px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <a href="{% url 'main' %}" class="logo">🧭 돌봄 나침반</a>
+                <div class="nav-buttons">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'mypage' %}"><button class="btn btn-secondary">마이페이지</button></a>
+                        <a href="{% url 'kakao_logout' %}" class="btn btn-secondary">로그아웃</a>
+                    {% else %}
+                        <a href="{% url 'kakao_login' %}" class="btn btn-secondary">카카오톡으로 로그인</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1 style="text-align: center; margin-bottom: 15px;">{{ profile.name }}님을 위한 AI 맞춤 추천 결과</h1>
+        <p class="page-subtitle">AI가 {{ profile.health_conditions }}, {{ profile.preferred_services }} 등을 고려하여 추천한 최적의 시설입니다.</p>
+
+        {% if recommended_facilities %}
+            <div class="facility-grid">
+                {% for facility in recommended_facilities %}
+                <div class="facility-card">
+                    <div class="facility-image" style="background-image: url('...')"></div>
+                    <div class="facility-info">
+                        <span class="facility-badge">{{ facility.institution_type|default:'요양시설' }}</span>
+                        <div class="facility-name">{{ facility.facility_name }}</div>
+                        <div class="facility-desc">{{ facility.address|default:'주소 정보 없음' }}</div>
+                        <div class="facility-details">
+                            전화: {{ facility.phone_number|default:'정보 없음' }}<br>
+                            정원: {{ facility.capacity|default:0 }}명
+                        </div>
+                        <div class="facility-actions">
+                            <a href="{% url 'facility_detail' facility_id=facility.facility_name %}" class="facility-link">상세정보 보기</a>
+                            <button class="facility-like">♡</button>
+                        </div>
+
+                        <div class="ai-reason-card">
+                            <div class="ai-reason-title">🤖 AI 추천 이유</div>
+                            <p class="ai-reason-text">{{ facility.ai_reason }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <p>AI 추천 결과를 불러오는 데 실패했습니다.</p>
+                <p>잠시 후 다시 시도해주세요.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
